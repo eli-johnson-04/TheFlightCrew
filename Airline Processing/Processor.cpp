@@ -1,13 +1,8 @@
 #include <iostream>
-#include "SplayTree.cpp"
-#include "Processor.h"
-#include <fstream>
-#include <sstream>
-#include "rapidcsv.h"
-#include <string>
 #include <vector>
-#include <unordered_map>
-#include <map>
+#include <algorithm>
+#include "Processor.h"
+#include "rapidcsv.h"
 
 void Processor::start()
 {
@@ -61,6 +56,30 @@ void Processor::addReview(vector<std::string>& review)
     // Stage 2 - Data Structure Integration
     //-------------------------------------
 
-    sourceMap.emplace(review[9], unordered_map<string, vector<Airline*>>());
+    // Part A - HashMap
+    string source = review[9];
+    string dest = review[10];
 
+    if (!sourceMap.count(source))
+        sourceMap.emplace(source, unordered_map<string, vector<Airline*>>());
+
+    auto destMap = sourceMap.at(source);
+    if (!destMap.count(dest))
+        destMap.emplace(dest, vector<Airline*>());
+
+    auto airlineVec = destMap.at(dest);
+    if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
+        airlineVec.push_back(airline);
+
+    // Part B - Splay Tree
+    if (!sourceTree.searchTree(source))
+        sourceTree.insert(source);
+
+    destMap = sourceTree.searchTree(source)->destinations;
+    if (!destMap.count(dest))
+        destMap.emplace(dest, vector<Airline*>());
+
+    airlineVec = destMap.at(dest);
+    if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
+        airlineVec.push_back(airline);
 }
