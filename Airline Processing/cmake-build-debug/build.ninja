@@ -49,14 +49,20 @@ cmake_ninja_workdir = C$:/Users/jxavi/OneDrive/Documents/GitHub/TheFlightCrew/Ai
 
 build cmake_object_order_depends_target_Airline_Processing: phony || CMakeFiles/Airline_Processing.dir
 
-build CMakeFiles/Airline_Processing.dir/main.cpp.obj: CXX_COMPILER__Airline_Processing_unscanned_Debug C$:/Users/jxavi/OneDrive/Documents/GitHub/TheFlightCrew/Airline$ Processing/main.cpp || cmake_object_order_depends_target_Airline_Processing
-  DEP_FILE = CMakeFiles\Airline_Processing.dir\main.cpp.obj.d
+build CMakeFiles/Airline_Processing.dir/Processor.cpp.obj: CXX_COMPILER__Airline_Processing_unscanned_Debug C$:/Users/jxavi/OneDrive/Documents/GitHub/TheFlightCrew/Airline$ Processing/Processor.cpp || cmake_object_order_depends_target_Airline_Processing
+  DEP_FILE = CMakeFiles\Airline_Processing.dir\Processor.cpp.obj.d
   FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Airline_Processing.dir
   OBJECT_FILE_DIR = CMakeFiles\Airline_Processing.dir
 
 build CMakeFiles/Airline_Processing.dir/SplayTree.cpp.obj: CXX_COMPILER__Airline_Processing_unscanned_Debug C$:/Users/jxavi/OneDrive/Documents/GitHub/TheFlightCrew/Airline$ Processing/SplayTree.cpp || cmake_object_order_depends_target_Airline_Processing
   DEP_FILE = CMakeFiles\Airline_Processing.dir\SplayTree.cpp.obj.d
+  FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Airline_Processing.dir
+  OBJECT_FILE_DIR = CMakeFiles\Airline_Processing.dir
+
+build CMakeFiles/Airline_Processing.dir/Airline.cpp.obj: CXX_COMPILER__Airline_Processing_unscanned_Debug C$:/Users/jxavi/OneDrive/Documents/GitHub/TheFlightCrew/Airline$ Processing/Airline.cpp || cmake_object_order_depends_target_Airline_Processing
+  DEP_FILE = CMakeFiles\Airline_Processing.dir\Airline.cpp.obj.d
   FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Airline_Processing.dir
   OBJECT_FILE_DIR = CMakeFiles\Airline_Processing.dir
@@ -69,7 +75,7 @@ build CMakeFiles/Airline_Processing.dir/SplayTree.cpp.obj: CXX_COMPILER__Airline
 #############################################
 # Link the executable Airline_Processing.exe
 
-build Airline_Processing.exe: CXX_EXECUTABLE_LINKER__Airline_Processing_Debug CMakeFiles/Airline_Processing.dir/main.cpp.obj CMakeFiles/Airline_Processing.dir/SplayTree.cpp.obj
+build Airline_Processing.exe: CXX_EXECUTABLE_LINKER__Airline_Processing_Debug CMakeFiles/Airline_Processing.dir/Processor.cpp.obj CMakeFiles/Airline_Processing.dir/SplayTree.cpp.obj CMakeFiles/Airline_Processing.dir/Airline.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Airline_Processing.dir
