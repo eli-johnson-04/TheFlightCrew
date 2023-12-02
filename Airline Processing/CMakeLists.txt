@@ -6,4 +6,5 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(Airline_Processing Processor.cpp SplayTree.cpp
         Processor.h
         Airline.cpp
-        Airline.h)
+        Airline.h
+        rapidcsv.h)
