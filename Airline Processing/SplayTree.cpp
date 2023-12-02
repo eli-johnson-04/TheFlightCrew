@@ -3,17 +3,18 @@
 // Tutorial URL: http://algorithmtutor.com/Data-Structures/Tree/Splay-Trees/
 
 // Code heavily modified from original format
+#pragma once
 #include <iostream>
 #include <unordered_map>
 #include <vector>
-#include "Airline.h"
+#include "Processor.h"
 
 using namespace std;
 
 // data structure that represents a node in the tree
 struct Node {
 	string name; // holds the key
-    unordered_map<string, vector<Airline*>> destinations;
+    unordered_map<string, vector<Processor*>> destinations;
 	Node *parent; // pointer to the parent
 	Node *left; // pointer to left child
 	Node *right; // pointer to right child
