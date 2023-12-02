@@ -9,8 +9,7 @@ class Processor
     unordered_map<string, unordered_map<string, vector<Airline*>>> sourceMap;
     unordered_set<Airline*> airlines;
 
-    vector<Airline*> sortResults();
-    Airline* findAirline(string source, string dest);
+    vector<Airline*> sortResults(); // sort pre print
 public:
     void start(); // Generates Splay Tree and HashMap of sources
     void addReview(vector<string>&);

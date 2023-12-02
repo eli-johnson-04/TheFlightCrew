@@ -6,7 +6,7 @@ class Airline
 {
     std::string name;
     int numReviews;
-    std::vector<float> ratings = std::vector<float>(8, 0);
+    std::vector<float> scores = std::vector<float>(8, 0);
     /*
      * Vector Indices Legend
      * 0 - Overall
@@ -21,5 +21,6 @@ class Airline
 public:
     Airline(std::string name);
     ~Airline() = default;
+    std::string getName();
     void updateAirline(std::vector<std::string> stats); // Updates airline stats based on input
 };
