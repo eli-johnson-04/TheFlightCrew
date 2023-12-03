@@ -10,7 +10,7 @@ void Processor::start()
     // RapidCSV Library obtained from https://github.com/d99kris/rapidcsv
 
     // Create Document object without any headers from the source CSV
-    rapidcsv::Document file("./cmake-build-debug/AirlineData.csv", rapidcsv::LabelParams(-1, -1));
+    rapidcsv::Document file("AirlineData.csv", rapidcsv::LabelParams(-1, -1));
 
     // Position counter to store current line number
     int filePos = 0;
@@ -18,6 +18,8 @@ void Processor::start()
     // Read entire file
     while (filePos < file.GetRowCount())
     {
+        if (filePos % 100 == 0)
+            std::cout << filePos << std::endl;
         // Obtain vector containing all values in the row (Airline name, ratings, source city, destination city)
         std::vector<string> review = file.GetRow<string>(filePos);
 
