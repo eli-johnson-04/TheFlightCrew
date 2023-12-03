@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <string>
 #include "Processor.h"
 
 int main()
@@ -11,6 +13,8 @@ int main()
     std::cout << "Time (Tree): " << timePair.second << std::endl;
 
     auto routeVec = prog->getRouteVec();
+
+    std::cout << std::fixed << std::setprecision(1) << std::endl;
     for (auto airline : routeVec)
     {
         std::cout << airline->getName() << ": ";

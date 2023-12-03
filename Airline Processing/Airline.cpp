@@ -3,8 +3,6 @@
 Airline::Airline(std::string name)
 {
     this->name = name;
-    this->numReviews = 0;
-
 }
 
 std::string Airline::getName()
@@ -14,12 +12,12 @@ std::string Airline::getName()
 
 void Airline::updateAirline(std::vector<std::string> stats)
 {
-    numReviews++;
     for (int i = 1; i < 9; i++)
     {
         if (std::stof(stats[i]) == -1)
             continue;
         scores[i-1] += std::stof(stats[i]);
+        numReviews[i-1] += 1;
     }
 }
 
@@ -31,5 +29,5 @@ std::vector<float> Airline::getScores()
 void Airline::finalizeScores()
 {
     for (int i = 0; i < 8; i++)
-        scores[i] /= numReviews;
+        scores[i] /= numReviews[i];
 }

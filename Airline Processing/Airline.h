@@ -5,7 +5,6 @@
 class Airline
 {
     std::string name;
-    int numReviews;
     /*
      * Vector Indices Legend
      * 0 - Overall
@@ -18,6 +17,7 @@ class Airline
      * 7 - Wifi
      */
     std::vector<float> scores = std::vector<float>(8, 0);
+    std::vector<int> numReviews = std::vector<int>(8, 0);
 public:
     Airline(std::string name);
     ~Airline() = default;
