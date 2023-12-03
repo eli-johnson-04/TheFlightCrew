@@ -43,7 +43,7 @@ def fixCSV(airlineReviews, newfile, layoverPattern):
                 row += 1
 
 # This function processes the csv file to create the one that will be used by the program.
-def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, outputMisses):
+def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMisses):
     # This list features words to exclude while looking for layovers.
     exclude_list = ["viadana", "viareggio", "vianden", "via del mar", "bolivia", "viaduct",
                     "viagrande", "slovakia", "viacha", "rome via napoli", "viamao", "vianden castle", "scandinavia",
@@ -70,6 +70,10 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, outputM
                 no_route_count = 0
 
                 for review in reviewReader:
+                    # Rename the Slug and Title columns in the header.
+                    if review[15] == 'Slug':
+                        review[15] = 'Source'
+                        review[16] = 'Destination'
                     # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
                     # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
                     match = re.search(rPattern, review[12])
@@ -88,7 +92,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, outputM
                             review[15] = 'NO_SOURCE'
                             review[16] = 'NO_DEST'
                             no_route_count += 1
-                        elif outputMisses:
+                        elif writeMisses:
                             missesWriter.writerow([review[index] for index in [12, 21]])
 
                     # List generator for creating a list of the desired values. Checks if a given rating column does
@@ -109,23 +113,77 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, outputM
                     if line[9] != '' and line[10] != '':
                         if ' ' not in line[9] and ' ' not in line[10]:
                             writer.writerow(line)
+                #print(no_route_count)
+
+
+# This function is going to replace airport codes with their respective cities to standardize the data.
+def replaceAirportCodes(airlineData, airportCodes):
+    # A dictionary where the airport code will map to the name of the city it is in. Will be used for replacement.
+    codes = {}
+
+    # Open the csv containing the airport codes.
+    with open(airportCodes, encoding = 'utf-8') as airportCodesFile:
+        # Create the reader object.
+        codeReader = csv.reader(airportCodesFile, delimiter = ',')
+
+        # Add every airport code (column 0) and its corresponding city (column 9) as an entry in the dictionary.
+        for line in codeReader:
+            # Skip the header.
+            if line[0] != 'code':
+                codes[line[0]] = line[9]
+
+
+    # Open the airline data.
+    with open(airlineData, encoding = 'utf-8') as airlines:
+        # Create the reader object.
+        reviewReader = csv.reader(airlines, delimiter = ',')
+
+        # Set up the regex for finding airport codes. Finds a sequence of 3 and only 3 capitalized letters.
+        codePattern = re.compile(r'^[A-Z]{3}$')
+
+        # Track the number of missing codes.
+        missing_codes = 0
+        misses = set()
+
+        for review in reviewReader:
+            src = re.search(codePattern, review[9])
+            dest = re.search(codePattern, review[10])
+
+            # Try to replace the source and destination codes with their corresponding cities.
+            if src:
+                try:
+                    review[9] = codes[review[9]]
+                except:
+                    missing_codes += 1
+                    misses.add(review[9])
+
+            if dest:
+                try:
+                    review[10] = codes[review[10]]
+                except:
+                    missing_codes += 1
+                    misses.add(review[10])
+
+        print(missing_codes)
+        print(misses)
+
 
 def main():
-    # THIS PROGRAM OPERATES ON AN UNMODIFIED VERSION OF THE DATASET DIRECTLY FROM KAGGLE.
+    # THIS PROGRAM OPERATES ON UNMODIFIED VERSIONS OF THE ORIGINAL DATASETS.
     '''
-    Column Legend:
-    0 - Aircraft
-    1 - AirlineName
-    2 - CabinType
-    3 - DateFlown
-    4 - DatePub
-    5 - EntertainmentRating
-    6 - FoodRating
-    7 - GroundServiceRating
-    8 - OriginCountry
-    9 - OverallScore
-    10 - Recommended
-    11 - Review
+    Column Legend for AirlineReviews.csv              Column Legend for airports.csv
+    0 - Aircraft                                      0 - code
+    1 - AirlineName                                   1 - time_zone_id
+    2 - CabinType                                     2 - name
+    3 - DateFlown                                     3 - city_code
+    4 - DatePub                                       4 - country_id
+    5 - EntertainmentRating                           5 - location
+    6 - FoodRating                                    6 - elevation
+    7 - GroundServiceRating                           7 - url
+    8 - OriginCountry                                 8 - icao
+    9 - OverallScore                                  9 - city
+    10 - Recommended                                  10 - county
+    11 - Review                                       11 - state
     12 - Route
     13 - SeatComfortRating
     14 - ServiceRating
@@ -138,8 +196,23 @@ def main():
     21 - unique_id
     '''
 
-    # Create a list containing the indices of the desired columns from the csv.
-    columns_to_write = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
+    # Create a list containing the indices of the desired columns from AirlineReviews.csv.
+    COLUMNS_TO_WRITE = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
+
+    '''
+    Column Legend for AirlineData.csv
+    0 - AirlineName
+    1 - OverallScore
+    2 - EntertainmentRating
+    3 - FoodRating
+    4 - SeatComfortRating
+    5 - ServiceRating
+    6 - ValueRating
+    7 - GroundServiceRating
+    8 - WifiRating
+    9 - Source
+    10 - Destination
+    '''
 
     # This pattern searches for "via" and any word following. We do not care about layovers.
     # DEFUNCT
@@ -162,7 +235,8 @@ def main():
 
 
     #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
-    processCSV('AirlineReviews.csv', 'AirlineData.csv', bareRoutePattern, columns_to_write, includeNoRoutes = True, outputMisses = True)
+    processCSV('AirlineReviews.csv', 'AirlineData.csv', bareRoutePattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = True)
+    replaceAirportCodes('AirlineData.csv', 'airports.csv')
     exit()
 
 if __name__ == '__main__':
