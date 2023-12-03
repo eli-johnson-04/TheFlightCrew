@@ -2,6 +2,7 @@
 #include "TextBox.h"
 #include <cmath>
 
+// the textbox functionality is inspired by TermSpar video https://www.youtube.com/watch?v=T31MoLJws4U&ab_channel=TermSpar
 int main()
 {
     // makes window of the application with size 1200x600
@@ -59,28 +60,9 @@ int main()
     fromBox.setSize(sf::Vector2f(365.f, 30.f));
     fromBox.setPosition(70.f, 200.f);
     fromBox.setFillColor(sf::Color::Red);
-    sf::RectangleShape fromOutline;
-    fromOutline.setSize(sf::Vector2f(369.f, 34.f));
-    fromOutline.setPosition(68.f, 198.f);
-    fromOutline.setFillColor(sf::Color::Black);
-    /*
-    sf::RectangleShape fromLeft;
-    fromLeft.setSize(sf::Vector2f(2.f, 32.f));
-    fromLeft.setPosition(70.f, 200.f);
-    fromLeft.setFillColor(sf::Color::Black);
-    sf::RectangleShape fromTop;
-    fromTop.setSize(sf::Vector2f(365.f, 2.f));
-    fromTop.setPosition(70.f, 200.f);
-    fromTop.setFillColor(sf::Color::Black);
-    sf::RectangleShape fromRight;
-    fromRight.setSize(sf::Vector2f(2.f, 30.f));
-    fromRight.setPosition(435.f, 200.f);
-    fromRight.setFillColor(sf::Color::Black);
-    sf::RectangleShape fromBottom;
-    fromBottom.setSize(sf::Vector2f(365.f, 2.f));
-    fromBottom.setPosition(72.f, 230.f);
-    fromBottom.setFillColor(sf::Color::Black);
-*/
+    fromBox.setOutlineColor(sf::Color::Black);
+    fromBox.setOutlineThickness(2.f);
+
     // creation of the "to location" box
     TextBox toLoc = TextBox(20, sf::Color::Black);
     toLoc.setFont(comicNeueReg);
@@ -92,33 +74,38 @@ int main()
     toBox.setSize(sf::Vector2f(365.f, 30.f));
     toBox.setPosition(70.f, 300.f);
     toBox.setFillColor(sf::Color::Yellow);
-    sf::RectangleShape toOutline;
-    toOutline.setSize(sf::Vector2f(369.f, 34.f));
-    toOutline.setPosition(68.f, 298.f);
-    toOutline.setFillColor(sf::Color::Black);
-    /*
-    sf::RectangleShape toLeft;
-    toLeft.setSize(sf::Vector2f(2.f, 32.f));
-    toLeft.setPosition(70.f, 300.f);
-    toLeft.setFillColor(sf::Color::Black);
-    sf::RectangleShape toTop;
-    toTop.setSize(sf::Vector2f(365.f, 2.f));
-    toTop.setPosition(70.f, 300.f);
-    toTop.setFillColor(sf::Color::Black);
-    sf::RectangleShape toRight;
-    toRight.setSize(sf::Vector2f(2.f, 30.f));
-    toRight.setPosition(435.f, 300.f);
-    toRight.setFillColor(sf::Color::Black);
-    sf::RectangleShape toBottom;
-    toBottom.setSize(sf::Vector2f(365.f, 2.f));
-    toBottom.setPosition(72.f, 330.f);
-    toBottom.setFillColor(sf::Color::Black);
-     */
+    toBox.setOutlineColor(sf::Color::Black);
+    toBox.setOutlineThickness(2.f);
 
     // error message for missing input placeholder
     sf::Text missingInputText("", comicNeueBold, 20);
     missingInputText.setPosition(sf::Vector2f(20.f,380.f));
     missingInputText.setFillColor(sf::Color::Red);
+
+    // TODO: 1/4 testing data set
+    std::vector<std::vector<std::string>> airlineTable ={
+            {"1", "2", "3", "4", "5"},
+            {"Airline A", "Airline B", "Airline C", "Airline D", "Airline E"},
+            {"10", "10", "9", "8", "7"},
+            {"Charlie", "22", "UK", "W", "W"}
+    };
+
+    const float cellWidth = 100.0f;
+    const float cellHeight = 30.0f;
+    const float posAdjustX = 600.f;
+    const float posAdjustY = 100.f;
+
+    std::vector<sf::Text> texts;
+
+    // TODO: 2/4 converts the data values into text objects and puts in a vector
+    for (int i = 0; i < airlineTable[i].size(); ++i) {
+        for (int j = 0; j < airlineTable.size(); ++j) {
+            sf::Text text(airlineTable[j][i], comicNeueReg, 14);
+            text.setPosition(2+posAdjustX+(cellWidth * (float)j), posAdjustY+(cellHeight * (float)i));
+            text.setFillColor(sf::Color::Black);
+            texts.push_back(text);
+        }
+    }
 
     while (window.isOpen())
     {
@@ -135,7 +122,7 @@ int main()
                 }
                 case sf::Event::MouseButtonPressed:
                 {
-                    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    if (LEFT_CLICK)
                     {
                         std::cout << mousePosition.x << " " << mousePosition.y << std::endl;
                         if (mousePosition.x > 70 && mousePosition.x < 435 && mousePosition.y > 200 && mousePosition.y < 230)
@@ -174,36 +161,50 @@ int main()
                     toLoc.typedOn(event);
                 }
             }
+            // reset screen to white
             window.clear(sf::Color::White);
 
+            // renders the left-hand side text + screen split
             window.draw(title);
             window.draw(fromText);
             window.draw(toText);
             window.draw(midBorder);
 
+            // renders all go button related visuals
             window.draw(goOutline);
             window.draw(goButton);
             window.draw(goText);
             window.draw(missingInputText);
 
-            window.draw(fromOutline);
+            // renders the from-location box
             window.draw(fromBox);
-            /*
-            window.draw(fromLeft);
-            window.draw(fromTop);
-            window.draw(fromRight);
-            window.draw(fromBottom);
-*/
-            window.draw(toOutline);
-            window.draw(toBox);
-            /*
-            window.draw(toLeft);
-            window.draw(toTop);
-            window.draw(toRight);
-            window.draw(toBottom);
-*/
             fromLoc.drawTo(window);
+
+            // renders the to-location box
+            window.draw(toBox);
             toLoc.drawTo(window);
+
+            // renders the table template
+            //window.draw(tableVert1);
+
+            // TODO: 3/4 renders the table template
+            for (int i = 0; i < airlineTable[i].size(); ++i) {
+                for (int j = 0; j < airlineTable.size(); ++j) {
+                    sf::RectangleShape cell(sf::Vector2f(cellWidth, cellHeight));
+                    cell.setPosition(posAdjustX+(cellWidth * j), posAdjustY+(cellHeight * i));
+                    cell.setOutlineThickness(2.0f);
+                    cell.setOutlineColor(sf::Color::Black);
+                    window.draw(cell);
+                }
+            }
+
+            // TODO: 4/4 puts text on the cells
+            for (const auto& text : texts)
+            {
+                window.draw(text);
+            }
+
+            // shows the new window frame
             window.display();
         }
     }
