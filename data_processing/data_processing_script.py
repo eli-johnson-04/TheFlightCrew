@@ -66,6 +66,8 @@ def processCSV(input, output, rPattern, columnsToWrite):
                 # Create the writer object.
                 missesWriter = csv.writer(missesCSV, delimiter = ',')
 
+                no_route_count = 0
+
                 for review in reviewReader:
                     # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
                     # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
@@ -75,10 +77,15 @@ def processCSV(input, output, rPattern, columnsToWrite):
                         review[15] = match.group(1)
                         review[16] = match.group(3)
 
-                    # If a match is not found, write its ID to 'misses.csv' to improve data recognition.
-                    # Print the 'Route' and 'unique-id' columns for that review.
+                    # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
+                    # 'Route'(12) and 'unique-id'(21) columns for that review. I have tried multiple methods for
+                    # selecting various rows but a generator is currently the only one that works consistently.
                     else:
-                        missesWriter.writerow([review[index] for index in [12, 21]])
+                        if review[12] == '':
+                            review[15] = 'NO_SOURCE'
+                            review[16] = 'NO_DEST'
+                            no_route_count += 1
+                        missesWriter.writerow([review[index] for index in [15, 16, 21]])
 
                     # List generator for creating a list of the desired values.
                     line = [review[index] for index in columnsToWrite]
