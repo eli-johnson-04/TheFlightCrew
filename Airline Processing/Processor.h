@@ -9,9 +9,11 @@ class Processor
     SplayTree sourceTree;
     unordered_map<string, unordered_map<string, vector<Airline*>>> sourceMap;
     unordered_set<Airline*> airlines;
+    vector<Airline*> currRoute;
 
 public:
     void start(); // Generates Splay Tree and HashMap of sources
     void addReview(vector<string>&);
-    tuple<vector<Airline*>, double, double> getData(string source, string dest, int flag = 0); // Returns sorted (according to flag) vector of airlines that fly a route
+    std::pair<double, double> getRouteVec(string source, string dest); // Returns sorted (according to flag) vector of airlines that fly a route
+    void sortRoute(int flag = 0);
 };

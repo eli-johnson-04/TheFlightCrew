@@ -25,6 +25,9 @@ void Processor::start()
         addReview(review);
         filePos++;
     }
+
+    for (auto airline : airlines)
+        airline->finalizeScores();
 }
 
 void Processor::addReview(vector<std::string>& review)
@@ -97,10 +100,19 @@ void Processor::addReview(vector<std::string>& review)
         airlineVec.push_back(airline);
 }
 
-tuple<vector<Airline*>, double, double> Processor::getData(string source, string dest, int flag)
+void Processor::sortRoute(int flag)
+{
+    // Lambda function to sort by specified category
+    // Code adapted from https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
+    std::sort(currRoute.begin(), currRoute.end(), [&](const auto& x, const auto& y)
+    {return x->getScores()[flag] > y->getScores()[flag];});
+}
+
+std::pair<double, double> Processor::getRouteVec(string source, string dest)
 {
     // Time variables for the HashMap and Splay Tree
     double mapTime, treeTime;
+
 
     // Part A - HashMap
 
@@ -109,11 +121,6 @@ tuple<vector<Airline*>, double, double> Processor::getData(string source, string
 
     // Retrieve airline vector from HashMap
     vector<Airline*> vec = sourceMap.at(source).at(dest);
-
-    // Lambda function to sort by specified category
-    // Code adapted from https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
-    std::sort(vec.begin(), vec.end(), [&](const auto& x, const auto& y)
-    {return x->getScores()[flag] > y->getScores()[flag];});
 
     // Stop timer and store total time to find and sort data
     auto end = std::chrono::high_resolution_clock::now();
@@ -129,15 +136,13 @@ tuple<vector<Airline*>, double, double> Processor::getData(string source, string
     // Retrieve airline vector from Splay Tree
     vec = sourceTree.searchTree(source)->destinations.at(dest);
 
-    // Sort by specified category
-    std::sort(vec.begin(), vec.end(), [&](const auto& x, const auto& y)
-    {return x->getScores()[flag] > y->getScores()[flag];});
-
     // Stop timer and store total time to find and sort data
     end = std::chrono::high_resolution_clock::now();
     diff = end - start;
     treeTime = diff.count();
 
-    // Return tuple with sorted vector and total time to execute
-    return make_tuple(vec, mapTime, treeTime);
+    currRoute = vec;
+
+    // Return pair with total time to execute for both data structures
+    return std::make_pair(mapTime, treeTime);
 }
