@@ -60,6 +60,9 @@ def processCSV(input, output, layoverPattern, rPattern):
             # Create the reader object.
             reviewReader = csv.reader(inFile, delimiter = ',')
 
+            # Create a list containing the indices of the desired columns from the csv.
+            columns_to_write = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
+
             for review in reviewReader:
                 '''
                 # Check for layovers.
@@ -85,9 +88,6 @@ def processCSV(input, output, layoverPattern, rPattern):
                     review[15] = match.group(1)
                     review[16] = match.group(3)
 
-                # Create a list containing the indices of the desired columns from the csv.
-                columns_to_write = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
-
                 # List generator for creating a list of the desired values.
                 line = [review[index] for index in columns_to_write]
 
@@ -96,9 +96,11 @@ def processCSV(input, output, layoverPattern, rPattern):
                 if 'via' in line[10] and line[10][:line[10].find(' ')] not in exclude_list:
                     line[10] = line[10][:line[10].find(' v')]
 
-                # Checks that the source and destination values are not empty.
+                # Checks that the source and destination values are not empty, and that they have no spaces.
+                # This keeps improper information out, such as unmodified slug or review values.
                 if line[9] != '' and line[10] != '':
-                    writer.writerow(line)
+                    if ' ' not in line[9] and ' ' not in line[10]:
+                        writer.writerow(line)
 
 def main():
     # THIS PROGRAM OPERATES ON AN UNMODIFIED VERSION OF THE DATASET DIRECTLY FROM KAGGLE.
