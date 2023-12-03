@@ -9,25 +9,16 @@
 #define LEFT_CLICK sf::Mouse::isButtonPressed(sf::Mouse::Left)
 #define RIGHT_CLICK sf::Mouse::isButtonPressed(sf::Mouse::Right)
 
+// the textbox functionality is inspired by TermSpar game development textbox/button video.
+
 class TextBox
 {
 public:
-    TextBox() {}
-    TextBox(int size, sf::Color color)
+    TextBox(int size, sf::Color color, int maxChars = 20)
     {
         textbox.setCharacterSize(size);
         textbox.setFillColor(color);
         selected = false;
-        /*
-        if (selected)
-        {
-            textbox.setString("|");
-        }
-        else
-        {
-            textbox.setString("");
-        }
-        */
     }
 
     void setFont(sf::Font& font)
@@ -38,11 +29,6 @@ public:
     void setPosition(sf::Vector2f pos)
     {
         textbox.setPosition(pos);
-    }
-
-    void setLimit(bool cond)
-    {
-        hasLimit = cond;
     }
 
     void setLimit(bool cond, int lim)
@@ -58,16 +44,6 @@ public:
         {
 
         }
-        /*if (!sel)
-        {
-            std::string t = text.str();
-            std::string newT = "";
-            for (int i = 0; i < t.length() - 1; i++)
-            {
-                newT += t[i];
-            }
-            textbox.setString(newT);
-        }*/
     }
 
     std::string getText()
@@ -111,7 +87,7 @@ private:
     std::ostringstream text;
     bool selected = false;
     bool hasLimit = false;
-    int maxChars;
+    int maxChars{};
 
     void inputLogic(int charTyped)
     {
@@ -132,7 +108,8 @@ private:
     void backspace()
     {
         std::string currText = text.str();
-        std::string newText = "";
+        std::string newText;
+        newText = "";
         for (int i = 0; i < currText.length() - 1; i++)
         {
             newText += currText[i];
