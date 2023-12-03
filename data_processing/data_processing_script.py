@@ -61,28 +61,38 @@ def processCSV(input, output, rPattern, columnsToWrite):
             # Create the reader object.
             reviewReader = csv.reader(inFile, delimiter = ',')
 
-            for review in reviewReader:
-                # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
-                # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
-                match = re.search(rPattern, review[12])
-                if match:
-                    # Set values in the source and destination columns.
-                    review[15] = match.group(1)
-                    review[16] = match.group(3)
+            # Create a separate file for checking non-matches.
+            with open('misses.csv ', mode = 'w', encoding = 'utf-8', newline = '') as missesCSV:
+                # Create the writer object.
+                missesWriter = csv.writer(missesCSV, delimiter = ',')
 
-                # List generator for creating a list of the desired values.
-                line = [review[index] for index in columnsToWrite]
+                for review in reviewReader:
+                    # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
+                    # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
+                    match = re.search(rPattern, review[12])
+                    if match:
+                        # Set values in the source and destination columns.
+                        review[15] = match.group(1)
+                        review[16] = match.group(3)
 
-                # In the event that the route information is properly formatted, this will remove layover information.
-                # Searches for 'via' within the string and checks that it is not part of a country or city name.
-                if 'via' in line[10] and line[10][:line[10].find(' ')] not in exclude_list:
-                    line[10] = line[10][:line[10].find(' v')]
+                    # If a match is not found, write its ID to 'misses.csv' to improve data recognition.
+                    # Print the 'Route' and 'unique-id' columns for that review.
+                    else:
+                        missesWriter.writerow([review[index] for index in [12, 21]])
 
-                # Checks that the source and destination values are not empty, and that they have no spaces.
-                # This keeps improper information out, such as unmodified slug or review values.
-                if line[9] != '' and line[10] != '':
-                    if ' ' not in line[9] and ' ' not in line[10]:
-                        writer.writerow(line)
+                    # List generator for creating a list of the desired values.
+                    line = [review[index] for index in columnsToWrite]
+
+                    # In the event that the route information is properly formatted, this will remove layover information.
+                    # Searches for 'via' within the string and checks that it is not part of a country or city name.
+                    if 'via' in line[10] and line[10][:line[10].find(' ')] not in exclude_list:
+                        line[10] = line[10][:line[10].find(' v')]
+
+                    # Checks that the source and destination values are not empty, and that they have no spaces.
+                    # This keeps improper information out, such as unmodified slug or review values.
+                    if line[9] != '' and line[10] != '':
+                        if ' ' not in line[9] and ' ' not in line[10]:
+                            writer.writerow(line)
 
 def main():
     # THIS PROGRAM OPERATES ON AN UNMODIFIED VERSION OF THE DATASET DIRECTLY FROM KAGGLE.
