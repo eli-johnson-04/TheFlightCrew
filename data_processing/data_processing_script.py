@@ -1,7 +1,8 @@
 import csv
 import re
+import os
 
-#defunct
+#DEFUNCT
 def fixCSV(airlineReviews, newfile, layoverPattern):
     # This list features words to exclude while looking for layovers.
     exclude_list = ["viadana", "viareggio", "vianden", "via del mar", "bolivia", "viaduct",
@@ -58,16 +59,16 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
         writer = csv.writer(out, delimiter = ',')
 
         # Open the input file.
-        with open(input, encoding = 'utf-8') as inFile:
+        with open(input, encoding = 'utf-8', newline = '') as inFile:
             # Create the reader object.
             reviewReader = csv.reader(inFile, delimiter = ',')
 
             # Create a separate file for checking non-matches.
             with open('misses.csv ', mode = 'w', encoding = 'utf-8', newline = '') as missesCSV:
-                '''SETUP---------------------------------------------------------------------------------------------'''
                 # Create the writer object.
                 missesWriter = csv.writer(missesCSV, delimiter = ',')
 
+                '''SETUP---------------------------------------------------------------------------------------------'''
                 no_route_count = 0
 
                 # Track airport code misses and which codes were missed.
@@ -148,8 +149,9 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                                 code_misses += 1
                                 airport_misses.add(line[10])
 
-                    # Write the line.
-                    writer.writerow(line)
+                    # Write the line, ignoring the header.
+                    if line[0] != "AirlineName":
+                        writer.writerow(line)
 
                 '''DEBUG---------------------------------------------------------------------------------------------'''
                 #print(no_route_count)
@@ -158,7 +160,9 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     print(sorted(airport_misses))
 
 
+
 # This function is going to replace airport codes with their respective cities to standardize the data.
+# DEFUNCT
 def replaceAirportCodes(airlineData, airportCodes):
     # A dictionary where the airport code will map to the name of the city it is in. Will be used for replacement.
     codes = {}
@@ -296,7 +300,7 @@ def main():
 
 
     #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
-    #TODO: turn off writemisses before finalizing!
+    #TODO: defaults: includeNoRoutes = True, writeMisses = False, replaceCodes = False
     processCSV('AirlineReviews.csv', 'AirlineData.csv', bareRoutePattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = False, replaceCodes = False)
     #replaceAirportCodes('AirlineData.csv', 'airports.csv')
     exit()
