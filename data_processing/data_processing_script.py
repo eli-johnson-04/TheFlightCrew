@@ -96,7 +96,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
                     match = re.search(rPattern, review[12])
                     airportHyphenMatch = re.search(sillyPattern, review[12])
-                    if match and not airportHyphenMatch:
+                    if match:
                         # Set values in the source and destination columns.
                         review[15] = match.group(1)
                         review[16] = match.group(2)
@@ -104,8 +104,8 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     # If a match is found with the format "XXX-XXX"
                     elif airportHyphenMatch:
                         # Set values in the source and destination columns.
-                        review[15] = airportHyphenMatch.group(1)
-                        review[16] = airportHyphenMatch.group(3)
+                        review[15] = airportHyphenMatch.group(2)
+                        review[16] = airportHyphenMatch.group(4)
 
                         '''MATCH NOT FOUND / NO ROUTE CHECK----------------------------------------------------------'''
                     # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
