@@ -12,6 +12,9 @@ class Processor
     vector<Airline*> currRoute;
 
 public:
+    Processor() = default;
+    ~Processor() = default;
+
     void start(); // Generates Splay Tree and HashMap of sources
     void addReview(vector<string>&);
     std::pair<double, double> getRouteVec(string source, string dest); // Returns sorted (according to flag) vector of airlines that fly a route

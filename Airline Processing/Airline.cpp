@@ -20,7 +20,5 @@ std::vector<float> Airline::getScores()
 void Airline::finalizeScores()
 {
     for (auto& rating : scores)
-    {
         rating / numReviews;
-    }
 }
