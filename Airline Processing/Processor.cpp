@@ -10,7 +10,7 @@ void Processor::start()
     // RapidCSV Library obtained from https://github.com/d99kris/rapidcsv
 
     // Create Document object without any headers from the source CSV
-    rapidcsv::Document file("./cmake-build-debug/reviews.csv", rapidcsv::LabelParams(-1, -1));
+    rapidcsv::Document file("./cmake-build-debug/AirlineData.csv", rapidcsv::LabelParams(-1, -1));
 
     // Position counter to store current line number
     int filePos = 0;
@@ -66,38 +66,43 @@ void Processor::addReview(vector<std::string>& review)
     string source = review[9];
     string dest = review[10];
 
-    // If sourceMap doesn't contain the source city,
-    // create new entry with corresponding destination map
-    if (!sourceMap.count(source))
-        sourceMap.emplace(source, unordered_map<string, vector<Airline*>>());
+    // Checks if review is associated with a route
+    // Only add to map if a route is associated with the review
+    if(source != "NO_SOURCE")
+    {
+        // If sourceMap doesn't contain the source city,
+        // create new entry with corresponding destination map
+        if (!sourceMap.count(source))
+            sourceMap.emplace(source, unordered_map<string, vector<Airline*>>());
 
-    // If destinationMap for source city doesn't contain destination city,
-    // create new entry with corresponding airline vector
-    auto destMap = sourceMap.at(source);
-    if (!destMap.count(dest))
-        destMap.emplace(dest, vector<Airline*>());
+        // If destinationMap for source city doesn't contain destination city,
+        // create new entry with corresponding airline vector
+        auto destMap = sourceMap.at(source);
+        if (!destMap.count(dest))
+            destMap.emplace(dest, vector<Airline*>());
 
-    // If airlineVec for destination city doesn't contain the airline being reviewed,
-    // add it to the vector
-    auto airlineVec = destMap.at(dest);
-    if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
-        airlineVec.push_back(airline);
+        // If airlineVec for destination city doesn't contain the airline being reviewed,
+        // add it to the vector
+        auto airlineVec = destMap.at(dest);
+        if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
+            airlineVec.push_back(airline);
 
-    // Part B - Splay Tree
+        // Part B - Splay Tree
 
-    // If tree lacks city, add it
-    if (!sourceTree.searchTree(source))
-        sourceTree.insert(source);
+        // If tree lacks city, add it
+        if (!sourceTree.searchTree(source))
+            sourceTree.insert(source);
 
-    // If source city lacks destination city, add it
-    destMap = sourceTree.searchTree(source)->destinations;
-    if (!destMap.count(dest))
-        destMap.emplace(dest, vector<Airline*>());
+        // If source city lacks destination city, add it
+        destMap = sourceTree.searchTree(source)->destinations;
+        if (!destMap.count(dest))
+            destMap.emplace(dest, vector<Airline*>());
 
-    // If destination city lacks airline, add it
-    airlineVec = destMap.at(dest);
-    if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
-        airlineVec.push_back(airline);
+        // If destination city lacks airline, add it
+        airlineVec = destMap.at(dest);
+        if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
+            airlineVec.push_back(airline);
+    }
 }
 
 void Processor::sortRoute(int flag)
