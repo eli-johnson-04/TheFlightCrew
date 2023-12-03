@@ -42,7 +42,7 @@ int main()
     goCenter.x = goCenter.x + goButton.getRadius();
     goCenter.y = goCenter.y + goButton.getRadius();
 
-
+    // makes the application splitting border
     sf::RectangleShape midBorder;
     midBorder.setSize(sf::Vector2f(15.f, 600.f));
     midBorder.setPosition(550.f, 0.f);
@@ -115,6 +115,11 @@ int main()
     toBottom.setFillColor(sf::Color::Black);
      */
 
+    // error message for missing input placeholder
+    sf::Text missingInputText("", comicNeueBold, 20);
+    missingInputText.setPosition(sf::Vector2f(20.f,380.f));
+    missingInputText.setFillColor(sf::Color::Red);
+
     while (window.isOpen())
     {
         sf::Event event{};
@@ -151,7 +156,15 @@ int main()
 
                         if (distance <= goButton.getRadius())
                         {
-                            std::cout << "DO THE THING FROM THE OTHER CODE!!" << std::endl; //TODO: change to proper function
+                            if (fromLoc.getText().empty() || toLoc.getText().empty())
+                            {
+                                missingInputText.setString("Must have input\nin both boxes!");
+                            }
+                            else
+                            {
+                                missingInputText.setString("");
+                                std::cout << "DO THE THING FROM THE OTHER CODE!!" << std::endl; //TODO: change to proper function
+                            }
                         }
                     }
                 }
@@ -171,6 +184,7 @@ int main()
             window.draw(goOutline);
             window.draw(goButton);
             window.draw(goText);
+            window.draw(missingInputText);
 
             window.draw(fromOutline);
             window.draw(fromBox);
