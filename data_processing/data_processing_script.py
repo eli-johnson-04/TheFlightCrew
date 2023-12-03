@@ -1,6 +1,5 @@
 import csv
 import re
-import os
 
 #DEFUNCT
 def fixCSV(airlineReviews, newfile, layoverPattern):
@@ -82,6 +81,9 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     # Set up the regex for finding airport codes. Finds a sequence of 3 and only 3 capitalized letters.
                     codePattern = re.compile(r'^[A-Z]{3}$')
 
+                # This pattern is explicitly for checking for "XXX-XXX" formatting.
+                sillyPattern = re.compile(r'(([\w]+)-([A-Z]+))')
+
                 '''PROCESSING REVIEWS--------------------------------------------------------------------------------'''
                 for review in reviewReader:
                     # Rename the Slug and Title columns in the header.
@@ -93,10 +95,17 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
                     # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
                     match = re.search(rPattern, review[12])
-                    if match:
+                    airportHyphenMatch = re.search(sillyPattern, review[12])
+                    if match and not airportHyphenMatch:
                         # Set values in the source and destination columns.
                         review[15] = match.group(1)
                         review[16] = match.group(2)
+
+                    # If a match is found with the format "XXX-XXX"
+                    elif airportHyphenMatch:
+                        # Set values in the source and destination columns.
+                        review[15] = airportHyphenMatch.group(1)
+                        review[16] = airportHyphenMatch.group(3)
 
                         '''MATCH NOT FOUND / NO ROUTE CHECK----------------------------------------------------------'''
                     # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
@@ -111,7 +120,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                             review[15] = 'NO_SOURCE'
                             review[16] = 'NO_DEST'
                             no_route_count += 1
-                        # todo: if there is no route data, ignore the row
+                        # todo: if there is no route data, it is not considered a miss
                         if writeMisses and review[12] != '':
                             missesWriter.writerow([review[index] for index in [12, 21]])
 
@@ -284,9 +293,6 @@ def main():
     # DEFUNCT
     pattern = re.compile(r'(((.*)(\s+to\s+)(.*)|(([\w]+)-([A-Z]+))))\s+via\s+(\b\w+\b)\s*', flags=re.IGNORECASE)
 
-    # This pattern is explicitly for checking for "XXX-XXX" formatting.
-    sillyPattern = re.compile(r'(([\w]+)-([A-Z]+))', flags = re.IGNORECASE)
-
     # This pattern is explicitly for checking that there is proper route information.
     # DEFUNCT
     routePattern = re.compile(r'^((\b\w+(\s+\w+)*\b)\s+to\s+(\b\w+(\s+\w+)*\b))|(\b\w+)(-)(\w+\b)$', flags = re.IGNORECASE)
@@ -297,10 +303,15 @@ def main():
                                   r'\s+to\s+'             # 2 - Matches the phrase ' to ' with any number of spaces around it.
                                   r'(\b\w+(\s+\w+)*\b)'   # 3 - Matches single or multi-word cities/airport codes. Same as first group.
                                   r'\s*$',                #     Allows for an optional space at the end of the last string.
-                                  flags = re.IGNORECASE)  # Ignores the case of all characters.
+                                  flags = re.IGNORECASE)  #     Ignores the case of all characters.
 
-    # Route pattern with punctuation.
-    punctualPattern = re.compile(r'^([\w.-]+(?:\s+[\w.-]+)*)\s+to\s+([\w.-]+(?:\s+[\w.-]+)*)\s*$', flags = re.IGNORECASE)
+    # Route pattern with punctuation.                            Groups:
+    punctualPattern = re.compile(r'^([\w.-]+(?:\s+[\w.-]+)*)'  # 1 - Matches a single or multiword city/airport code, with hyphens and periods allowed. 
+                                                               #     EX: 'Paris', 'Cape Town', 'LGA', 'St. Petersburg', 'Ixtapa-Zihuatanejo'
+                                 r'\s+to\s+'                   #     Matches the phrase 'to' with any number of spaces around it. 
+                                 r'([\w.-]+(?:\s+[\w.-]+)*)'   # 2 - Same as first group. 
+                                 r'\s*$',                      #     Allows for an optional space at the end of the last string.
+                                 flags = re.IGNORECASE)        #     Ignores the case of all characters
 
 
 
