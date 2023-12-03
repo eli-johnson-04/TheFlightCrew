@@ -84,9 +84,9 @@ void Processor::addReview(vector<std::string>& review)
 
         // If airlineVec for destination city doesn't contain the airline being reviewed,
         // add it to the vector
-        auto& airlineVec = destMapMap.at(dest);
-        if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
-            airlineVec.push_back(airline);
+        auto& airlineVecMap = destMapMap.at(dest);
+        if (find(airlineVecMap.begin(), airlineVecMap.end(), airline) == airlineVecMap.end())
+            airlineVecMap.push_back(airline);
 
         // Part B - Splay Tree
 
@@ -100,9 +100,9 @@ void Processor::addReview(vector<std::string>& review)
             destMapTree.emplace(dest, vector<Airline*>());
 
         // If destination city lacks airline, add it
-        airlineVec = destMapTree.at(dest);
-        if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
-            airlineVec.push_back(airline);
+        auto& airlineVecTree = destMapTree.at(dest);
+        if (find(airlineVecTree.begin(), airlineVecTree.end(), airline) == airlineVecTree.end())
+            airlineVecTree.push_back(airline);
     }
 }
 

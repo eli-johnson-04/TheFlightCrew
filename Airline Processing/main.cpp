@@ -10,7 +10,8 @@ int main()
     std::cout << "Time (Map): " << timePair.first << std::endl;
     std::cout << "Time (Tree): " << timePair.second << std::endl;
 
-    for (auto airline : prog->getRouteVec())
+    auto routeVec = prog->getRouteVec();
+    for (auto airline : routeVec)
     {
         std::cout << airline->getName() << ": ";
         for (auto stat : airline->getScores())

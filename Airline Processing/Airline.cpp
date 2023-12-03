@@ -30,6 +30,6 @@ std::vector<float> Airline::getScores()
 
 void Airline::finalizeScores()
 {
-    for (auto& rating : scores)
-        rating / numReviews;
+    for (int i = 0; i < 8; i++)
+        scores[i] /= numReviews;
 }
