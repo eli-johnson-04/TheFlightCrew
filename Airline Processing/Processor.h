@@ -10,9 +10,8 @@ class Processor
     unordered_map<string, unordered_map<string, vector<Airline*>>> sourceMap;
     unordered_set<Airline*> airlines;
 
-    vector<Airline*> sortResults(); // sort pre print
 public:
     void start(); // Generates Splay Tree and HashMap of sources
     void addReview(vector<string>&);
-    vector<Airline*> getData(); // Returns sorted vector of airlines that fly a route
+    tuple<vector<Airline*>, double, double> getData(int flag, string source, string dest); // Returns sorted (according to flag) vector of airlines that fly a route
 };

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 #include "Processor.h"
 #include "rapidcsv.h"
 
@@ -94,4 +95,49 @@ void Processor::addReview(vector<std::string>& review)
     airlineVec = destMap.at(dest);
     if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
         airlineVec.push_back(airline);
+}
+
+tuple<vector<Airline*>, double, double> Processor::getData(int flag, string source, string dest)
+{
+    //Need to do both tree and hashmap
+    double mapTime, treeTime;
+
+    // Part A - HashMap
+
+    // Start timer
+    auto start = std::chrono::high_resolution_clock::now();
+
+    // Retrieve airline vector from HashMap
+    vector<Airline*> vec = sourceMap.at(source).at(dest);
+
+    // Lambda function to sort by specified category
+    // Code adapted from https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
+    std::sort(vec.begin(), vec.end(), [&](const auto& x, const auto& y)
+    {return x->getScores()[flag] > y->getScores()[flag];});
+
+    // Stop timer and store total time to find and sort data
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> diff = end - start;
+    mapTime = diff.count();
+
+
+    // Part B - Splay Tree
+
+    // Start timer
+    start = std::chrono::high_resolution_clock::now();
+
+    // Retrieve airline vector from Splay Tree
+    vec = sourceTree.searchTree(source)->destinations.at(dest);
+
+    // Sort by specified category
+    std::sort(vec.begin(), vec.end(), [&](const auto& x, const auto& y)
+    {return x->getScores()[flag] > y->getScores()[flag];});
+
+    // Stop timer and store total time to find and sort data
+    end = std::chrono::high_resolution_clock::now();
+    diff = end - start;
+    treeTime = diff.count();
+
+    // Return tuple with sorted vector and total time to execute
+    return make_tuple(vec, mapTime, treeTime);
 }
