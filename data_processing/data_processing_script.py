@@ -68,7 +68,6 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                 # Create the writer object.
                 missesWriter = csv.writer(missesCSV, delimiter = ',')
 
-                # TODO: the number of reviews without routes is not accounting for the discrepancy between total reviews and the sum of matches and misses???
                 no_route_count = 0
 
                 # Track airport code misses and which codes were missed.
@@ -104,7 +103,6 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     # selecting various rows but a generator is currently the only one that works consistently.
 
                     # When a review without a route is found, use the flags "NO_SOURCE" and "NO_DEST" in place of actual data.
-                    # todo: figure out why some data has slugs and titles
                     else:
                         # This conditional will interpret anything unmatched as not having a route. This data is still
                         # useful, but it also means that as the recognition is improved, things will automatically be included.
