@@ -26,11 +26,13 @@ void Processor::start()
         filePos++;
     }
 
+    // Take average of ratings for each airline
     for (auto airline : airlines)
         airline->finalizeScores();
 
 }
 
+// Add review to data structures (HashMap and Splay Tree)
 void Processor::addReview(vector<std::string>& review)
 {
     // Stage 1 - Airline Generation/Updating
@@ -148,11 +150,13 @@ std::pair<double, double> Processor::setRouteVec(string source, string dest)
     treeTime = diff.count();
 
     currRoute = vec;
+    sortRoute();
 
     // Return pair with total time to execute for both data structures
     return std::make_pair(mapTime, treeTime);
 }
 
+// Return vector of airlines corresponding to current route
 vector<Airline*> Processor::getRouteVec()
 {
     return currRoute;
