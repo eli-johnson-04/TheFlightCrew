@@ -6,7 +6,6 @@ int main()
     Processor* prog = new Processor();
 
     prog->start();
-
     std::pair<double, double> timePair = prog->setRouteVec("Chicago", "Atlanta");
     std::cout << "Time (Map): " << timePair.first << std::endl;
     std::cout << "Time (Tree): " << timePair.second << std::endl;
