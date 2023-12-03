@@ -1,7 +1,7 @@
 import csv
 import re
 
-#todo: currently defunct
+#defunct
 def fixCSV(airlineReviews, newfile, layoverPattern):
     # This list features words to exclude while looking for layovers.
     exclude_list = ["viadana", "viareggio", "vianden", "via del mar", "bolivia", "viaduct",
@@ -51,6 +51,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     "peruvian",
                     "viaair", "boliviana", "belavia"]
 
+    '''OPENING FILES-------------------------------------------------------------------------------------------------'''
     # "Open" the output file.
     with open(output, mode = 'w', encoding = 'utf-8', newline = '') as out:
         # Create the writer object.
@@ -63,6 +64,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
 
             # Create a separate file for checking non-matches.
             with open('misses.csv ', mode = 'w', encoding = 'utf-8', newline = '') as missesCSV:
+                '''SETUP---------------------------------------------------------------------------------------------'''
                 # Create the writer object.
                 missesWriter = csv.writer(missesCSV, delimiter = ',')
 
@@ -79,11 +81,14 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                 # Set up the regex for finding airport codes. Finds a sequence of 3 and only 3 capitalized letters.
                 codePattern = re.compile(r'^[A-Z]{3}$')
 
+                '''PROCESSING REVIEWS--------------------------------------------------------------------------------'''
                 for review in reviewReader:
                     # Rename the Slug and Title columns in the header.
                     if review[15] == 'Slug':
                         review[15] = 'Source'
                         review[16] = 'Destination'
+
+                    '''CORRECT FORMATTING CHECK----------------------------------------------------------------------'''
                     # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
                     # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
                     match = re.search(rPattern, review[12])
@@ -92,6 +97,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         review[15] = match.group(1)
                         review[16] = match.group(3)
 
+                        '''MATCH NOT FOUND / NO ROUTE CHECK----------------------------------------------------------'''
                     # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
                     # 'Route'(12) and 'unique-id'(21) columns for that review. I have tried multiple methods for
                     # selecting various rows but a generator is currently the only one that works consistently.
@@ -105,6 +111,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         elif writeMisses:
                             missesWriter.writerow([review[index] for index in [12, 21]])
 
+                    '''NULL RATING CHECK-----------------------------------------------------------------------------'''
                     # List generator for creating a list of the desired values. Checks if a given rating column does
                     # not have a value. If so, replace with '-1' so that it will be ignored when processed by the program.
                     line = [review[index] for index in columnsToWrite]
@@ -112,11 +119,13 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         if line[index] == '':
                             line[index] = '-1'
 
+                    '''CORRECTLY FORMATTED LAYOVER CHECK-------------------------------------------------------------'''
                     # In the event that the route information is properly formatted, this will remove layover information.
                     # Searches for 'via' within the string and checks that it is not part of a country or city name.
                     if 'via' in line[10] and line[10][:line[10].find(' ')] not in exclude_list:
                         line[10] = line[10][:line[10].find(' v')]
 
+                    '''AIRPORT CODE CHECK / REPLACEMENT--------------------------------------------------------------'''
                     # Search for airport codes in the source and destination columns.
                     src = re.search(codePattern, line[9])
                     dest = re.search(codePattern, line[10])
@@ -136,12 +145,10 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                             code_misses += 1
                             airport_misses.add(line[10])
 
-                    # Checks that the source and destination values are not empty, and that they have no spaces.
-                    # This keeps improper information out, such as unmodified slug or review values.
-                    if line[9] != '' and line[10] != '':
-                        if ' ' not in line[9] and ' ' not in line[10]:
-                            writer.writerow(line)
+                    # Write the line.
+                    writer.writerow(line)
 
+                '''DEBUG---------------------------------------------------------------------------------------------'''
                 #print(no_route_count)
                 print('airport code misses: ', code_misses)
                 print(airport_misses)
@@ -285,6 +292,7 @@ def main():
 
 
     #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
+    #TODO: turn off writemisses before finalizing!
     processCSV('AirlineReviews.csv', 'AirlineData.csv', bareRoutePattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = True)
     #replaceAirportCodes('AirlineData.csv', 'airports.csv')
     exit()
