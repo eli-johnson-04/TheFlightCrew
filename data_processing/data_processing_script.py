@@ -81,8 +81,8 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     # Set up the regex for finding airport codes. Finds a sequence of 3 and only 3 capitalized letters.
                     codePattern = re.compile(r'^[A-Z]{3}$')
 
-                # This pattern is explicitly for checking for "XXX-XXX" formatting.
-                sillyPattern = re.compile(r'(([\w]+)-([A-Z]+))')
+                # This pattern is for checking for "XXX-XXX" or "XXX to XXX" formatting.
+                sillyPattern = re.compile(r'(([\w]+)(-|\s+to\s+)([A-Z]+))')
 
                 '''PROCESSING REVIEWS--------------------------------------------------------------------------------'''
                 for review in reviewReader:
