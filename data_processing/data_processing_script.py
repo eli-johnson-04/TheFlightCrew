@@ -43,7 +43,7 @@ def fixCSV(airlineReviews, newfile, layoverPattern):
                 row += 1
 
 # This function processes the csv file to create the one that will be used by the program.
-def processCSV(input, output, rPattern, columnsToWrite):
+def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes):
     # This list features words to exclude while looking for layovers.
     exclude_list = ["viadana", "viareggio", "vianden", "via del mar", "bolivia", "viaduct",
                     "viagrande", "slovakia", "viacha", "rome via napoli", "viamao", "vianden castle", "scandinavia",
@@ -79,13 +79,15 @@ def processCSV(input, output, rPattern, columnsToWrite):
 
                     # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
                     # 'Route'(12) and 'unique-id'(21) columns for that review. I have tried multiple methods for
-                    # selecting various rows but a generator is currently the only one that works consistently.
+                    # selecting various rows but a generator is currently the only one that works consistently. When a
+                    # review without a route is found, use the flags "NO_SOURCE" and "NO_DEST" in place of actual data.
                     else:
-                        if review[12] == '':
+                        if includeNoRoutes and review[12] == '':
                             review[15] = 'NO_SOURCE'
                             review[16] = 'NO_DEST'
                             no_route_count += 1
-                        missesWriter.writerow([review[index] for index in [15, 16, 21]])
+                        else:
+                            missesWriter.writerow([review[index] for index in [12, 21]])
 
                     # List generator for creating a list of the desired values.
                     line = [review[index] for index in columnsToWrite]
@@ -128,21 +130,32 @@ def main():
     20 - WifiRating
     21 - unique_id
     '''
+
     # Create a list containing the indices of the desired columns from the csv.
     columns_to_write = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
 
     # This pattern searches for "via" and any word following. We do not care about layovers.
+    # DEFUNCT
     pattern = re.compile(r'(((.*)(\s+to\s+)(.*)|(([\w]+)-([A-Z]+))))\s+via\s+(\b\w+\b)\s*', flags=re.IGNORECASE)
+
     # This pattern is explicitly for checking for "XXX-XXX" formatting.
+    # DEFUNCT
     sillyPattern = re.compile(r'(([\w]+)-([A-Z]+))', flags = re.IGNORECASE)
+
     # This pattern is explicitly for checking that there is proper route information.
+    # DEFUNCT
     routePattern = re.compile(r'^((\b\w+(\s+\w+)*\b)\s+to\s+(\b\w+(\s+\w+)*\b))|(\b\w+)(-)(\w+\b)$', flags = re.IGNORECASE)
-    # Barebones route pattern.
-    bareRoutePattern = re.compile(r'^(\b\w+(\s+\w+)*\b)\s+to\s+(\b\w+(\s+\w+)*\b)$', flags = re.IGNORECASE)
+
+    # Barebones route pattern.                              Groups:
+    bareRoutePattern = re.compile(r'^(\b\w+(\s+\w+)*\b)'  # 1 - Matches single or multi-word cities/airport codes. 
+                                                          #     EX: 'Paris', 'Cape Town', 'LGA'
+                                  r'\s+to\s+'             # 2 - Matches the phrase ' to ' with any number of spaces around it.
+                                  r'(\b\w+(\s+\w+)*\b)$', # 3 - Matches single or multi-word cities/airport codes. Same as first group.
+                                  flags = re.IGNORECASE)  # Ignores the case of all characters.
 
 
     #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
-    processCSV('AirlineReviews.csv' , 'processTest.csv', bareRoutePattern, columns_to_write)
+    processCSV('AirlineReviews.csv', 'AirlineData.csv', bareRoutePattern, columns_to_write, includeNoRoutes = True)
     exit()
 
 if __name__ == '__main__':
