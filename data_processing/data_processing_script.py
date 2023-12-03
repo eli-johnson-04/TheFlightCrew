@@ -308,8 +308,10 @@ def main():
     # Route pattern with punctuation.                            Groups:
     punctualPattern = re.compile(r'^([\w.-]+(?:\s+[\w.-]+)*)'  # 1 - Matches a single or multiword city/airport code, with hyphens and periods allowed. 
                                                                #     EX: 'Paris', 'Cape Town', 'LGA', 'St. Petersburg', 'Ixtapa-Zihuatanejo'
+                                 r'(?:\s*\([A-Z]{3}\))?'         # NON-CAPTURING - OPTIONALLY matches an airport code in parentheses '(XXX)'
                                  r'\s+to\s+'                   #     Matches the phrase 'to' with any number of spaces around it. 
                                  r'([\w.-]+(?:\s+[\w.-]+)*)'   # 2 - Same as first group. 
+                                 r'(?:\s*\([A-Z]{3}\))?'         #     Same as first noncapturing group. 
                                  r'\s*$',                      #     Allows for an optional space at the end of the last string.
                                  flags = re.IGNORECASE)        #     Ignores the case of all characters
 
