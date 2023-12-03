@@ -1,6 +1,7 @@
 import csv
 import re
 
+#todo: currently defunct
 def fixCSV(airlineReviews, newfile, layoverPattern):
     # This list features words to exclude while looking for layovers.
     exclude_list = ["viadana", "viareggio", "vianden", "via del mar", "bolivia", "viaduct",
@@ -76,17 +77,16 @@ def processCSV(input, output, layoverPattern, rPattern):
                 else:
                     print(review[18])
                 '''
-                # Search for an accurate match to the correct pattern, excluding typos.
-                match = re.search(rPattern, review[9])
+                # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
+                # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
+                match = re.search(rPattern, review[12])
                 if match:
                     # Set values in the source and destination columns.
-                    review[10] = match.group(1)
-                    review[11] = match.group(3)
-                #else:
-                    #review[10] = match.group(7)
-                    #review[11] = match.group(9)
+                    review[15] = match.group(1)
+                    review[16] = match.group(3)
+
                 # Create a list containing the indices of the desired columns from the csv.
-                columns_to_write = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11]
+                columns_to_write = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
 
                 # List generator for creating a list of the desired values.
                 line = [review[index] for index in columns_to_write]
@@ -101,6 +101,32 @@ def processCSV(input, output, layoverPattern, rPattern):
                     writer.writerow(line)
 
 def main():
+    # THIS PROGRAM OPERATES ON AN UNMODIFIED VERSION OF THE DATASET DIRECTLY FROM KAGGLE.
+    '''
+    Column Legend:
+    0 - Aircraft
+    1 - AirlineName
+    2 - CabinType
+    3 - DateFlown
+    4 - DatePub
+    5 - EntertainmentRating
+    6 - FoodRating
+    7 - GroundServiceRating
+    8 - OriginCountry
+    9 - OverallScore
+    10 - Recommended
+    11 - Review
+    12 - Route
+    13 - SeatComfortRating
+    14 - ServiceRating
+    15 - Slug
+    16 - Title
+    17 - TravelType
+    18 - TripVerified
+    19 - ValueRating
+    20 - WifiRating
+    21 - unique_id
+    '''
     # This pattern searches for "via" and any word following. We do not care about layovers.
     pattern = re.compile(r'(((.*)(\s+to\s+)(.*)|(([\w]+)-([A-Z]+))))\s+via\s+(\b\w+\b)\s*', flags=re.IGNORECASE)
     # This pattern is explicitly for checking for "XXX-XXX" formatting.
