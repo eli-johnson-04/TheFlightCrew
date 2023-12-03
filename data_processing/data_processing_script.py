@@ -66,6 +66,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes):
                 # Create the writer object.
                 missesWriter = csv.writer(missesCSV, delimiter = ',')
 
+                # TODO: the number of reviews without routes is not accounting for the discrepancy between total reviews and the sum of matches and misses???
                 no_route_count = 0
 
                 for review in reviewReader:
@@ -79,8 +80,9 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes):
 
                     # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
                     # 'Route'(12) and 'unique-id'(21) columns for that review. I have tried multiple methods for
-                    # selecting various rows but a generator is currently the only one that works consistently. When a
-                    # review without a route is found, use the flags "NO_SOURCE" and "NO_DEST" in place of actual data.
+                    # selecting various rows but a generator is currently the only one that works consistently.
+
+                    # When a review without a route is found, use the flags "NO_SOURCE" and "NO_DEST" in place of actual data.
                     else:
                         if includeNoRoutes and review[12] == '':
                             review[15] = 'NO_SOURCE'
@@ -150,7 +152,8 @@ def main():
     bareRoutePattern = re.compile(r'^(\b\w+(\s+\w+)*\b)'  # 1 - Matches single or multi-word cities/airport codes. 
                                                           #     EX: 'Paris', 'Cape Town', 'LGA'
                                   r'\s+to\s+'             # 2 - Matches the phrase ' to ' with any number of spaces around it.
-                                  r'(\b\w+(\s+\w+)*\b)$', # 3 - Matches single or multi-word cities/airport codes. Same as first group.
+                                  r'(\b\w+(\s+\w+)*\b)'   # 3 - Matches single or multi-word cities/airport codes. Same as first group.
+                                  r'\s*$',                #     Allows for an optional space at the end of the last string.
                                   flags = re.IGNORECASE)  # Ignores the case of all characters.
 
 
