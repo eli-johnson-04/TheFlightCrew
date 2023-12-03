@@ -71,12 +71,12 @@ def processCSV(input, output, layoverPattern, rPattern):
                     print(review[18])
                 '''
                 match = re.search(rPattern, review[9])
-                if match.group(1):
-                    review[10] = match.group(2)
-                    review[11] = match.group(4)
-                elif match.group(6):
-                    review[10] = match.group(7)
-                    review[11] = match.group(9)
+                if match:
+                    review[10] = match.group(1)
+                    review[11] = match.group(3)
+                #else:
+                    #review[10] = match.group(7)
+                    #review[11] = match.group(9)
                 columns_to_write = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11]
                 line = [review[index] for index in columns_to_write]
                 writer.writerow(line)
@@ -88,10 +88,12 @@ def main():
     sillyPattern = re.compile(r'(([\w]+)-([A-Z]+))', flags = re.IGNORECASE)
     # This pattern is explicitly for checking that there is proper route information.
     routePattern = re.compile(r'^((\b\w+(\s+\w+)*\b)\s+to\s+(\b\w+(\s+\w+)*\b))|(\b\w+)(-)(\w+\b)$', flags = re.IGNORECASE)
+    # Barebones route pattern.
+    bareRoutePattern = re.compile(r'^(\b\w+(\s+\w+)*\b)\s+to\s+(\b\w+(\s+\w+)*\b)$', flags = re.IGNORECASE)
 
 
     fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
-    processCSV('AirlineReviews.csv' , 'processTest.csv', pattern, routePattern)
+    processCSV('AirlineReviews.csv' , 'processTest.csv', pattern, bareRoutePattern)
     exit()
 
 if __name__ == '__main__':
