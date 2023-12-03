@@ -18,8 +18,6 @@ void Processor::start()
     // Read entire file
     while (filePos < file.GetRowCount())
     {
-        if (filePos % 100 == 0)
-            std::cout << filePos << std::endl;
         // Obtain vector containing all values in the row (Airline name, ratings, source city, destination city)
         std::vector<string> review = file.GetRow<string>(filePos);
 
@@ -80,13 +78,13 @@ void Processor::addReview(vector<std::string>& review)
 
         // If destinationMap for source city doesn't contain destination city,
         // create new entry with corresponding airline vector
-        auto destMap = sourceMap.at(source);
-        if (!destMap.count(dest))
-            destMap.emplace(dest, vector<Airline*>());
+        auto& destMapMap = sourceMap.at(source);
+        if (!destMapMap.count(dest))
+            destMapMap.emplace(dest, vector<Airline*>());
 
         // If airlineVec for destination city doesn't contain the airline being reviewed,
         // add it to the vector
-        auto airlineVec = destMap.at(dest);
+        auto& airlineVec = destMapMap.at(dest);
         if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
             airlineVec.push_back(airline);
 
@@ -97,12 +95,12 @@ void Processor::addReview(vector<std::string>& review)
             sourceTree.insert(source);
 
         // If source city lacks destination city, add it
-        destMap = sourceTree.searchTree(source)->destinations;
-        if (!destMap.count(dest))
-            destMap.emplace(dest, vector<Airline*>());
+        auto& destMapTree = sourceTree.searchTree(source)->destinations;
+        if (!destMapTree.count(dest))
+            destMapTree.emplace(dest, vector<Airline*>());
 
         // If destination city lacks airline, add it
-        airlineVec = destMap.at(dest);
+        airlineVec = destMapTree.at(dest);
         if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
             airlineVec.push_back(airline);
     }

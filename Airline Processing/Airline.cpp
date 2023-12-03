@@ -3,6 +3,8 @@
 Airline::Airline(std::string name)
 {
     this->name = name;
+    this->numReviews = 0;
+
 }
 
 std::string Airline::getName()
