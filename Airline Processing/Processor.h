@@ -13,5 +13,5 @@ class Processor
 public:
     void start(); // Generates Splay Tree and HashMap of sources
     void addReview(vector<string>&);
-    tuple<vector<Airline*>, double, double> getData(int flag, string source, string dest); // Returns sorted (according to flag) vector of airlines that fly a route
+    tuple<vector<Airline*>, double, double> getData(string source, string dest, int flag = 0); // Returns sorted (according to flag) vector of airlines that fly a route
 };

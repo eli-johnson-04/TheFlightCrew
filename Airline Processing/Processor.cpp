@@ -97,9 +97,9 @@ void Processor::addReview(vector<std::string>& review)
         airlineVec.push_back(airline);
 }
 
-tuple<vector<Airline*>, double, double> Processor::getData(int flag, string source, string dest)
+tuple<vector<Airline*>, double, double> Processor::getData(string source, string dest, int flag)
 {
-    //Need to do both tree and hashmap
+    // Time variables for the HashMap and Splay Tree
     double mapTime, treeTime;
 
     // Part A - HashMap
