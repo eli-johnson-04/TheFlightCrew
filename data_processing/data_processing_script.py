@@ -96,7 +96,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     if match:
                         # Set values in the source and destination columns.
                         review[15] = match.group(1)
-                        review[16] = match.group(3)
+                        review[16] = match.group(2)
 
                         '''MATCH NOT FOUND / NO ROUTE CHECK----------------------------------------------------------'''
                     # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
@@ -111,7 +111,8 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                             review[15] = 'NO_SOURCE'
                             review[16] = 'NO_DEST'
                             no_route_count += 1
-                        if writeMisses:
+                        # todo: if there is no route data, ignore the row
+                        if writeMisses and review[12] != '':
                             missesWriter.writerow([review[index] for index in [12, 21]])
 
                     '''NULL RATING CHECK-----------------------------------------------------------------------------'''
@@ -298,10 +299,14 @@ def main():
                                   r'\s*$',                #     Allows for an optional space at the end of the last string.
                                   flags = re.IGNORECASE)  # Ignores the case of all characters.
 
+    # Route pattern with punctuation.
+    punctualPattern = re.compile(r'^([\w.-]+(?:\s+[\w.-]+)*)\s+to\s+([\w.-]+(?:\s+[\w.-]+)*)\s*$', flags = re.IGNORECASE)
+
+
 
     #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
     #TODO: defaults: includeNoRoutes = True, writeMisses = False, replaceCodes = False
-    processCSV('AirlineReviews.csv', 'AirlineData.csv', bareRoutePattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = False, replaceCodes = False)
+    processCSV('AirlineReviews.csv', 'AirlineData.csv', punctualPattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = True, replaceCodes = False)
     #replaceAirportCodes('AirlineData.csv', 'airports.csv')
     exit()
 
