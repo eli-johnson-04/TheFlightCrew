@@ -16,3 +16,11 @@ std::vector<float> Airline::getScores()
 {
     return scores;
 }
+
+void Airline::finalizeScores()
+{
+    for (auto& rating : scores)
+    {
+        rating / numReviews;
+    }
+}

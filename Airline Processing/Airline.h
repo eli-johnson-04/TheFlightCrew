@@ -24,4 +24,5 @@ public:
     std::string getName();
     std::vector<float> getScores();
     void updateAirline(std::vector<std::string> stats); // Updates airline stats based on input
+    void finalizeScores();
 };
