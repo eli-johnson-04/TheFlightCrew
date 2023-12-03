@@ -1,5 +1,10 @@
 #include "Airline.h"
 
+Airline::Airline(std::string name)
+{
+    this->name = name;
+}
+
 std::string Airline::getName()
 {
     return name;

@@ -17,6 +17,7 @@ public:
 
     void start(); // Generates Splay Tree and HashMap of sources
     void addReview(vector<string>&);
-    std::pair<double, double> getRouteVec(string source, string dest); // Returns sorted (according to flag) vector of airlines that fly a route
+    std::pair<double, double> setRouteVec(string source, string dest); // Returns sorted (according to flag) vector of airlines that fly a route
     void sortRoute(int flag = 0);
+    vector<Airline*> getRouteVec();
 };

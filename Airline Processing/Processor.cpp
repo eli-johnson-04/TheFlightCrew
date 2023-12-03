@@ -28,6 +28,7 @@ void Processor::start()
 
     for (auto airline : airlines)
         airline->finalizeScores();
+
 }
 
 void Processor::addReview(vector<std::string>& review)
@@ -113,7 +114,7 @@ void Processor::sortRoute(int flag)
     {return x->getScores()[flag] > y->getScores()[flag];});
 }
 
-std::pair<double, double> Processor::getRouteVec(string source, string dest)
+std::pair<double, double> Processor::setRouteVec(string source, string dest)
 {
     // Time variables for the HashMap and Splay Tree
     double mapTime, treeTime;
@@ -150,4 +151,9 @@ std::pair<double, double> Processor::getRouteVec(string source, string dest)
 
     // Return pair with total time to execute for both data structures
     return std::make_pair(mapTime, treeTime);
+}
+
+vector<Airline*> Processor::getRouteVec()
+{
+    return currRoute;
 }
