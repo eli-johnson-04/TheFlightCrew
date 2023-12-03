@@ -106,7 +106,9 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     # When a review without a route is found, use the flags "NO_SOURCE" and "NO_DEST" in place of actual data.
                     # todo: figure out why some data has slugs and titles
                     else:
-                        if includeNoRoutes and review[12] == '':
+                        # This conditional will interpret anything unmatched as not having a route. This data is still
+                        # useful, but it also means that as the recognition is improved, things will automatically be included.
+                        if includeNoRoutes:
                             review[15] = 'NO_SOURCE'
                             review[16] = 'NO_DEST'
                             no_route_count += 1
@@ -232,19 +234,19 @@ def extractCodesCSV(airportCodes):
 def main():
     # THIS PROGRAM OPERATES ON UNMODIFIED VERSIONS OF THE ORIGINAL DATASETS.
     '''
-    Column Legend for AirlineReviews.csv (              Column Legend for airports.csv
-    0 - Aircraft                                      0 - code
-    1 - AirlineName                                   1 - time_zone_id
-    2 - CabinType                                     2 - name
-    3 - DateFlown                                     3 - city_code
-    4 - DatePub                                       4 - country_id
-    5 - EntertainmentRating                           5 - location
-    6 - FoodRating                                    6 - elevation
-    7 - GroundServiceRating                           7 - url
-    8 - OriginCountry                                 8 - icao
-    9 - OverallScore                                  9 - city
-    10 - Recommended                                  10 - county
-    11 - Review                                       11 - state
+    Column Legend for AirlineReviews.csv (129456 rows)      Column Legend for airports.csv (todo: missing some codes)
+    0 - Aircraft                                            0 - code
+    1 - AirlineName                                         1 - time_zone_id
+    2 - CabinType                                           2 - name
+    3 - DateFlown                                           3 - city_code
+    4 - DatePub                                             4 - country_id
+    5 - EntertainmentRating                                 5 - location
+    6 - FoodRating                                          6 - elevation
+    7 - GroundServiceRating                                 7 - url
+    8 - OriginCountry                                       8 - icao
+    9 - OverallScore                                        9 - city
+    10 - Recommended                                        10 - county
+    11 - Review                                             11 - state
     12 - Route
     13 - SeatComfortRating
     14 - ServiceRating
