@@ -42,14 +42,15 @@ def fixCSV(airlineReviews, newfile, layoverPattern):
                     writer.writerow(review)
                 row += 1
 
-# This function is going to process the fixed csv file to create the one that will be used by the program.
-def processCSV(input, output, layoverPattern, rPattern):
+# This function processes the csv file to create the one that will be used by the program.
+def processCSV(input, output, rPattern, columnsToWrite):
     # This list features words to exclude while looking for layovers.
     exclude_list = ["viadana", "viareggio", "vianden", "via del mar", "bolivia", "viaduct",
                     "viagrande", "slovakia", "viacha", "rome via napoli", "viamao", "vianden castle", "scandinavia",
                     "moldovia", "aviation", "tel avia", "latvia", "monrovia", "avianca", "smartavia", "transavia",
                     "peruvian",
                     "viaair", "boliviana", "belavia"]
+
     # "Open" the output file.
     with open(output, mode = 'w', encoding = 'utf-8', newline = '') as out:
         # Create the writer object.
@@ -60,26 +61,7 @@ def processCSV(input, output, layoverPattern, rPattern):
             # Create the reader object.
             reviewReader = csv.reader(inFile, delimiter = ',')
 
-            # Create a list containing the indices of the desired columns from the csv.
-            columns_to_write = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
-
             for review in reviewReader:
-                '''
-                # Check for layovers.
-                match = re.search(layoverPattern, review[9])
-                if match:
-                    silly = re.search(XXXpattern, match)
-                    # Check if the route format is "XXX-XXX". Otherwise it will be "[source] to [dest]"
-                    if silly.group(0):
-                        source = match.group(7)
-                        dest = match.group(8)
-                    else:
-                        source = match.group(3)
-                        dest = match.group(5)
-                    writer.writerow(review[1:8] + ',' + source + ',' + dest)
-                else:
-                    print(review[18])
-                '''
                 # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
                 # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
                 match = re.search(rPattern, review[12])
@@ -89,7 +71,7 @@ def processCSV(input, output, layoverPattern, rPattern):
                     review[16] = match.group(3)
 
                 # List generator for creating a list of the desired values.
-                line = [review[index] for index in columns_to_write]
+                line = [review[index] for index in columnsToWrite]
 
                 # In the event that the route information is properly formatted, this will remove layover information.
                 # Searches for 'via' within the string and checks that it is not part of a country or city name.
@@ -129,6 +111,9 @@ def main():
     20 - WifiRating
     21 - unique_id
     '''
+    # Create a list containing the indices of the desired columns from the csv.
+    columns_to_write = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
+
     # This pattern searches for "via" and any word following. We do not care about layovers.
     pattern = re.compile(r'(((.*)(\s+to\s+)(.*)|(([\w]+)-([A-Z]+))))\s+via\s+(\b\w+\b)\s*', flags=re.IGNORECASE)
     # This pattern is explicitly for checking for "XXX-XXX" formatting.
@@ -140,7 +125,7 @@ def main():
 
 
     #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
-    processCSV('AirlineReviews.csv' , 'processTest.csv', pattern, bareRoutePattern)
+    processCSV('AirlineReviews.csv' , 'processTest.csv', bareRoutePattern, columns_to_write)
     exit()
 
 if __name__ == '__main__':
