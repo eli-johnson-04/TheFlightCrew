@@ -1,0 +1,4 @@
+airport codes following their cities
+hyphenated cities
+"XXX to XXX"
+cities with special letters and hyphens

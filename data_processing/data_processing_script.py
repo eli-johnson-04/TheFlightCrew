@@ -112,7 +112,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                             review[15] = 'NO_SOURCE'
                             review[16] = 'NO_DEST'
                             no_route_count += 1
-                        elif writeMisses:
+                        if writeMisses:
                             missesWriter.writerow([review[index] for index in [12, 21]])
 
                     '''NULL RATING CHECK-----------------------------------------------------------------------------'''
@@ -157,7 +157,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                 #print(no_route_count)
                 if replaceCodes:
                     print('airport code misses: ', code_misses)
-                    print(airport_misses)
+                    print(sorted(airport_misses))
 
 
 # This function is going to replace airport codes with their respective cities to standardize the data.
