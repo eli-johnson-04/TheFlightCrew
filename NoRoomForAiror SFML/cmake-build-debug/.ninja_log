@@ -1,0 +1,12 @@
+# ninja log v5
+19	1146	7231679601889463	CMakeFiles/minesweeper.dir/Button.cpp.obj	ae1a97842f9378fb
+2	777	7232797739380137	build.ninja	1ffe64ead24eafed
+5	1041	7231698430152037	CMakeFiles/minesweeper.dir/Toolbox.cpp.obj	23ef415191508747
+17	1010	7231697939966414	CMakeFiles/minesweeper.dir/Tile.cpp.obj	27f270a5e113d6eb
+5	1064	7231697940506440	CMakeFiles/minesweeper.dir/minesweeper.cpp.obj	3adb18173fad0178
+4	907	7231679864431529	CMakeFiles/minesweeper.dir/TypeBox.cpp.obj	bc1f86a18c6e9884
+26	1398	7231679604399425	CMakeFiles/minesweeper.dir/GameState.cpp.obj	c1f9ad9c59ee05ff
+5	1182	7232797452655714	CMakeFiles/NoRoomForAiror.dir/main.cpp.obj	9d9a51e4f7e46645
+1382	1656	7232789127655541	NoRoomForAiror.exe	32092735a6115114
+19	1261	7232495010292437	CMakeFiles/NoRoomForAiror.dir/Button.cpp.obj	73b74671243a760f
+5	304	7232797783632846	NoRoomForAiror.exe	dd1f0df63f31a944
