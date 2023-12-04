@@ -43,7 +43,7 @@ def fixCSV(airlineReviews, newfile, layoverPattern):
                 row += 1
 
 # This function processes the csv file to create the one that will be used by the program.
-def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMisses, replaceCodes):
+def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes = True, writeMisses = False, replaceCodes = True, debug = False):
     # This list features words to exclude while looking for layovers.
     exclude_list = ["viadana", "viareggio", "vianden", "via del mar", "bolivia", "viaduct",
                     "viagrande", "slovakia", "viacha", "rome via napoli", "viamao", "vianden castle", "scandinavia",
@@ -68,7 +68,14 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                 missesWriter = csv.writer(missesCSV, delimiter = ',')
 
                 '''SETUP---------------------------------------------------------------------------------------------'''
+                # Track the number of reviews without routes.
                 no_route_count = 0
+
+                # Track the number of misses.
+                misses = 0
+
+                # Track the number of processes reviews.
+                processedReviews = 0
 
                 # Track airport code misses and which codes were missed.
                 if replaceCodes:
@@ -94,7 +101,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                     # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
                     match = re.search(rPattern, review[12])
                     airportHyphenMatch = re.search(sillyPattern, review[12])
-                    viaMatch = re.search(viaPattern, review[12])
+                    #viaMatch = re.search(viaPattern, review[12])
                     if match:
                         # Set values in the source and destination columns.
                         review[15] = match.group(1)
@@ -107,7 +114,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         review[16] = airportHyphenMatch.group(4)
 
                     # Exact same regex parameters as the first pattern, except checks for 'via'.
-                    # todo: Currently not working
+                    # DEFUNCT
                     #elif viaMatch:
                         # In the case of "Bali via Perth", Perth is the source and Bali is the destination, so the groups are mirrored.
                         #review[15] = viaMatch.group(2)
@@ -126,8 +133,10 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         if includeNoRoutes:
                             review[15] = 'NO_SOURCE'
                             review[16] = 'NO_DEST'
-                        # todo: if there is no route data, it is not considered a miss
+
+                        # If there is no route data, it is not considered a miss
                         if writeMisses and review[12] != '':
+                            misses += 1
                             missesWriter.writerow([review[index] for index in [12, 21]])
 
                     '''NULL RATING CHECK-----------------------------------------------------------------------------'''
@@ -157,6 +166,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                                 # If no source city is found, set to no-route.
                                 if line[9] == '':
                                     line[9] = 'NO_SOURCE'
+
                             except:
                                 airport_misses.add(line[9])
                                 line[9] = 'NO_SOURCE'
@@ -165,9 +175,10 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         if dest:
                             try:
                                 line[10] = airportCodes[line[10]]
-                                # If no city is found, set to no-route.
+                                # If no destination city is found, set to no-route.
                                 if line[10] == '':
                                     line[10] = 'NO_DEST'
+
                             except:
                                 airport_misses.add(line[10])
                                 line[10] = 'NO_DEST'
@@ -196,13 +207,21 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
 
                     # Write the line, ignoring the header.
                     if line[0] != "AirlineName":
+                        processedReviews += 1
                         writer.writerow(line)
 
                 '''DEBUG---------------------------------------------------------------------------------------------'''
-                #print(no_route_count)
-                #if replaceCodes:
-                 #   print('airport code misses: ', code_misses)
-                  #  print(sorted(airport_misses))
+                if debug:
+                    # 129455 is the total number of reviews.
+                    print("processed reviews:", f"\b% ({processedReviews} / 129455)", (processedReviews / 129455) * 100)
+
+                    # 90,826 is the total number of reviews with route information.
+                    # String formatting from https://stackoverflow.com/questions/455612/limiting-floats-to-two-decimal-points
+                    print("route capture rate:", f"\b% ({90826 - misses} / 90826)", "%.2f" % round((((90826 - misses) / 90826) * 100), 2))
+                    print("no route entries:", no_route_count)
+                    if replaceCodes:
+                        print('airport code misses:', code_misses)
+                        print("missed codes:", sorted(airport_misses))
 
 
 
@@ -292,6 +311,7 @@ def extractCodesCSV(airportCodes):
     codeDict['SEL'] = 'Seoul'
     codeDict['STO'] = 'Stockholm'
 
+    # These are hand-checked typos.
     # Typo for JFK.
     codeDict['JFL'] = 'New York'
 
@@ -306,11 +326,32 @@ def extractCodesCSV(airportCodes):
 
     return codeDict
 
+# This function opens the CSV and verifies that every source and destination entry is one word with no spaces.
+def verify(dataPath):
+    # Open the file.
+    with open(dataPath, encoding = 'utf-8', newline = '') as data:
+        # Create the reader object.
+        dataReader = csv.reader(data, delimiter = ',')
+
+        # Track the number of incorrect entries.
+        misses = 0
+
+        # Iterate through every entry.
+        for entry in dataReader:
+            # Check the sources and destinations.
+            if entry[9] == '' or len(entry[9]) <= 1:
+                misses += 1
+            if entry[10] == '' or len(entry[10]) <= 1:
+                misses += 1
+
+        # Display the number of misses.
+        print("incorrect cities:", misses)
+
 
 def main():
     # THIS PROGRAM OPERATES ON UNMODIFIED VERSIONS OF THE ORIGINAL DATASETS.
     '''
-    Column Legend for AirlineReviews.csv (129456 rows)      Column Legend for airports.csv (todo: missing some codes)
+    Column Legend for AirlineReviews.csv (129456 rows)      Column Legend for airports.csv (missing some codes)
     0 - Aircraft                                            0 - code
     1 - AirlineName                                         1 - time_zone_id
     2 - CabinType                                           2 - name
@@ -366,7 +407,7 @@ def main():
     # DEFUNCT
     bareRoutePattern = re.compile(r'^(\b\w+(\s+\w+)*\b)'  # 1 - Matches single or multi-word cities/airport codes. 
                                                           #     EX: 'Paris', 'Cape Town', 'LGA'
-                                  r'\s+to\s+'             # 2 - Matches the phrase ' to ' with any number of spaces around it.
+                                  r'\s+to\s+'             # 2 - Matches the phrase ' to ' with at least one space on either side. 
                                   r'(\b\w+(\s+\w+)*\b)'   # 3 - Matches single or multi-word cities/airport codes. Same as first group.
                                   r'\s*$',                #     Allows for an optional space at the end of the last string.
                                   flags = re.IGNORECASE)  #     Ignores the case of all characters.
@@ -375,7 +416,7 @@ def main():
     punctualPattern = re.compile(r'^([\w.-]+(?:\s+[\w.-]+)*)'  # 1 - Matches a single or multiword city/airport code, with hyphens and periods allowed. 
                                                                #     EX: 'Paris', 'Cape Town', 'LGA', 'St. Petersburg', 'Ixtapa-Zihuatanejo'
                                  r'(?:\s*\(\w*\s*\w*\))?'       # NON-CAPTURING - OPTIONALLY matches a space followed by an airport code in parentheses '(XXX)'
-                                 r'\s+to\s+'                   #     Matches the phrase 'to' with any number of spaces around it. 
+                                 r'\s+to\s+'                   #     Matches the phrase 'to' with at least one space on either side. 
                                  r'([\w.-]+(?:\s+[\w.-]+)*)'   # 2 - Same as first group. 
                                  r'(?:\s*\(\w*\s*\w*\))?'       # NON-CAPTURING - Same as first noncapturing group. 
                                  r'\s*$',                      #     Allows for an optional space at the end of the last string.
@@ -383,10 +424,12 @@ def main():
 
 
 
-    #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
-    #TODO: defaults: includeNoRoutes = True, writeMisses = False, replaceCodes = True
-    processCSV('AirlineReviews.csv', 'AirlineData.csv', punctualPattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = False, replaceCodes = True)
-    #replaceAirportCodes('AirlineData.csv', 'airports.csv')
+    DEBUG = False
+    processCSV('AirlineReviews.csv', 'AirlineData.csv', punctualPattern, COLUMNS_TO_WRITE, writeMisses = True, debug = DEBUG)
+    
+    # If debug is turned on, verify the data.
+    if DEBUG:
+        verify('AirlineData.csv')
     exit()
 
 if __name__ == '__main__':
