@@ -126,7 +126,6 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         if includeNoRoutes:
                             review[15] = 'NO_SOURCE'
                             review[16] = 'NO_DEST'
-                            no_route_count += 1
                         # todo: if there is no route data, it is not considered a miss
                         if writeMisses and review[12] != '':
                             missesWriter.writerow([review[index] for index in [12, 21]])
@@ -155,26 +154,44 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         if src:
                             try:
                                 line[9] = airportCodes[line[9]]
+                                # If no source city is found, set to no-route.
+                                if line[9] == '':
+                                    line[9] = 'NO_SOURCE'
                             except:
+                                line[9] = 'NO_SOURCE'
                                 code_misses += 1
                                 airport_misses.add(line[9])
 
                         if dest:
                             try:
                                 line[10] = airportCodes[line[10]]
+                                # If no city is found, set to no-route.
+                                if line[10] == '':
+                                    line[10] = 'NO_DEST'
                             except:
+                                line[10] = 'NO_DEST'
                                 code_misses += 1
                                 airport_misses.add(line[10])
 
-                    # This is a check for making sure that poorly captured data does not impede on accuracy. If the
-                    # length of a source or destination somehow ends up at only one character, the whole row is deemed
-                    # as having no route.
-                    tinyPat = re.compile(r'^(.)$', flags = re.IGNORECASE)
+
+                        # If there is an instance where there is no city for an airport code, the row is deemed no-route.
+                        if line[9] == 'NO_SOURCE' or line[10] == 'NO_DEST':
+                            line[9] = 'NO_SOURCE'
+                            line[10] = 'NO_DEST'
+
+                    # This is a check for making sure that poorly captured data OR airport code conversion misses
+                    # do not impede on accuracy. If the length of a source or destination somehow ends up at only
+                    # one character, the whole row is deemed as having no route. The same applies for airport codes
+                    # without corresponding city entries.
+                    tinyPat = re.compile(r'^(.)$|^([A-Z]{3})$', flags = re.IGNORECASE)
                     srcMatch = re.search(tinyPat, line[9])
                     dstMatch = re.search(tinyPat, line[10])
                     if srcMatch or dstMatch:
                         line[9] = 'NO_SOURCE'
                         line[10] = 'NO_DEST'
+
+                    if line[9] == 'NO_SOURCE':
+                        no_route_count += 1
 
 
                     # Write the line, ignoring the header.
@@ -182,7 +199,7 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         writer.writerow(line)
 
                 '''DEBUG---------------------------------------------------------------------------------------------'''
-                #print(no_route_count)
+                print(no_route_count)
                 if replaceCodes:
                     print('airport code misses: ', code_misses)
                     print(sorted(airport_misses))
@@ -258,6 +275,23 @@ def extractCodesCSV(airportCodes):
             if line[0] != 'code':
                 codeDict[line[0]] = line[9]
 
+    # Not all the needed airport codes are listed in airports.csv, so they are being manually added here for the ones
+    # that could be found.
+    codeDict['BJS'] = 'Beijing'
+    codeDict['BUE'] = 'Buenos Aires'
+    codeDict['CMB'] = 'Colombo'
+    codeDict['FOZ'] = 'Foz do Iguacu'
+    codeDict['JKT'] = 'Jakarta'
+    codeDict['LON'] = 'London'
+    codeDict['MIL'] = 'Milan'
+    codeDict['NYC'] = 'New York'
+    codeDict['OSA'] = 'Osaka'
+    codeDict['REK'] = 'Reykjavik'
+    codeDict['ROM'] = 'Rome'
+    codeDict['SAO'] = 'Sao Paulo'
+    codeDict['SEL'] = 'Seoul'
+    codeDict['STO'] = 'Stockholm'
+
     return codeDict
 
 
@@ -291,6 +325,7 @@ def main():
 
     # Create a list containing the indices of the desired columns from AirlineReviews.csv.
     COLUMNS_TO_WRITE = [1, 9, 5, 6, 13, 14, 19, 7, 20, 15, 16]
+
 
     '''
     Column Legend for AirlineData.csv
@@ -338,7 +373,7 @@ def main():
 
     #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
     #TODO: defaults: includeNoRoutes = True, writeMisses = False, replaceCodes = False
-    processCSV('AirlineReviews.csv', 'AirlineData.csv', punctualPattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = True, replaceCodes = False)
+    processCSV('AirlineReviews.csv', 'AirlineData.csv', punctualPattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = True, replaceCodes = True)
     #replaceAirportCodes('AirlineData.csv', 'airports.csv')
     exit()
 
