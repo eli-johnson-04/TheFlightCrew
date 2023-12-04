@@ -1,12 +1,18 @@
-cmake_minimum_required(VERSION 3.26)
-project(Airline_Processing)
+cmake_minimum_required(VERSION 3.17)
+project(NoRoomForAiror)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Airline_Processing Processor.cpp SplayTree.cpp
+set(SFML_DIR "C:/Libraries/SFML-2.5.1/lib/cmake/SFML")
+find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
+
+
+add_executable(NoRoomForAiror Processor.cpp SplayTree.cpp
         Processor.h
         Airline.cpp
         Airline.h
         rapidcsv.h
 		TextBox.h
         main.cpp)
+
+target_link_libraries(NoRoomForAiror sfml-graphics sfml-audio)
