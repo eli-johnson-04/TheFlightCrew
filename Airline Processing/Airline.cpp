@@ -36,5 +36,9 @@ std::vector<float> Airline::getScores()
 void Airline::finalizeScores()
 {
     for (int i = 0; i < 8; i++)
+    {
         scores[i] /= numReviews[i];
+        int temp = scores[i] * 10;
+        scores[i] = temp / 10.0;
+    }
 }
