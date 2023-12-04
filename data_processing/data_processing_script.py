@@ -84,28 +84,41 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                 # This pattern is for checking for "XXX-XXX" or "XXX to XXX" formatting.
                 sillyPattern = re.compile(r'(([\w]+)(-|\s+to\s+)([A-Z]+))')
 
+                # This pattern is the exact same as punctualPatter, except it uses 'via' instead of 'to'.
+                viaPattern = re.compile(r'^([\w.-]+(?:\s+[\w.-]+)*)(?:\s*\(\w*\s*\w*\))?\s+via\s+([\w.-]+(?:\s+[\w.-]+)*)(?:\s*\(\w*\s*\w*\))?\s*$')
+
                 '''PROCESSING REVIEWS--------------------------------------------------------------------------------'''
                 for review in reviewReader:
-                    # Rename the Slug and Title columns in the header.
-                    if review[15] == 'Slug':
-                        review[15] = 'Source'
-                        review[16] = 'Destination'
-
                     '''CORRECT FORMATTING CHECK----------------------------------------------------------------------'''
                     # Search for an accurate match to the correct pattern, excluding typos. When a correct route is found,
                     # columns 15 and 16 (Slug and Title) will be overwritten to store the values of source and destination.
                     match = re.search(rPattern, review[12])
                     airportHyphenMatch = re.search(sillyPattern, review[12])
+                    viaMatch = re.search(viaPattern, review[12])
                     if match:
                         # Set values in the source and destination columns.
                         review[15] = match.group(1)
                         review[16] = match.group(2)
 
-                    # If a match is found with the format "XXX-XXX"
+                    # If a match is found with the format "XXX-XXX" or "XXX to XXX" (the latter should still be captured by the first pattern).
                     elif airportHyphenMatch:
                         # Set values in the source and destination columns.
                         review[15] = airportHyphenMatch.group(2)
                         review[16] = airportHyphenMatch.group(4)
+
+                    # Exact same regex parameters as the first pattern, except checks for 'via'.
+                    # todo: Currently not working
+                    #elif viaMatch:
+                        # In the case of "Bali via Perth", Perth is the source and Bali is the destination, so the groups are mirrored.
+                        #review[15] = viaMatch.group(2)
+                        #review[16] = viaMatch.group(1)
+
+                    # This is a check for making sure that poorly captured data does not impede on accuracy. If the
+                    # length of a source or destination somehow ends up at only one character, the whole row is deemed
+                    # as having no route. TODO: FIX ME
+                    #if (len(review[15]) <= 1 | len(review[16]) <= 1):
+                        #review[15] = 'NO_SOURCE'
+                        #review[16] = 'NO_DEST'
 
                         '''MATCH NOT FOUND / NO ROUTE CHECK----------------------------------------------------------'''
                     # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
@@ -298,6 +311,7 @@ def main():
     routePattern = re.compile(r'^((\b\w+(\s+\w+)*\b)\s+to\s+(\b\w+(\s+\w+)*\b))|(\b\w+)(-)(\w+\b)$', flags = re.IGNORECASE)
 
     # Barebones route pattern.                              Groups:
+    # DEFUNCT
     bareRoutePattern = re.compile(r'^(\b\w+(\s+\w+)*\b)'  # 1 - Matches single or multi-word cities/airport codes. 
                                                           #     EX: 'Paris', 'Cape Town', 'LGA'
                                   r'\s+to\s+'             # 2 - Matches the phrase ' to ' with any number of spaces around it.
@@ -308,10 +322,10 @@ def main():
     # Route pattern with punctuation.                            Groups:
     punctualPattern = re.compile(r'^([\w.-]+(?:\s+[\w.-]+)*)'  # 1 - Matches a single or multiword city/airport code, with hyphens and periods allowed. 
                                                                #     EX: 'Paris', 'Cape Town', 'LGA', 'St. Petersburg', 'Ixtapa-Zihuatanejo'
-                                 r'(?:\s*\([A-Z]{3}\))?'         # NON-CAPTURING - OPTIONALLY matches an airport code in parentheses '(XXX)'
+                                 r'(?:\s*\(\w*\s*\w*\))?'       # NON-CAPTURING - OPTIONALLY matches a space followed by an airport code in parentheses '(XXX)'
                                  r'\s+to\s+'                   #     Matches the phrase 'to' with any number of spaces around it. 
                                  r'([\w.-]+(?:\s+[\w.-]+)*)'   # 2 - Same as first group. 
-                                 r'(?:\s*\([A-Z]{3}\))?'         #     Same as first noncapturing group. 
+                                 r'(?:\s*\(\w*\s*\w*\))?'       # NON-CAPTURING - Same as first noncapturing group. 
                                  r'\s*$',                      #     Allows for an optional space at the end of the last string.
                                  flags = re.IGNORECASE)        #     Ignores the case of all characters
 
