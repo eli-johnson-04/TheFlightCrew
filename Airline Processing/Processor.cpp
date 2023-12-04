@@ -18,8 +18,6 @@ void Processor::start()
     // Read entire file
     while (filePos < file.GetRowCount())
     {
-        if (filePos % 100 == 0)
-            std::cout << filePos << std::endl;
         // Obtain vector containing all values in the row (Airline name, ratings, source city, destination city)
         std::vector<string> review = file.GetRow<string>(filePos);
 
@@ -28,11 +26,13 @@ void Processor::start()
         filePos++;
     }
 
+    // Take average of ratings for each airline
     for (auto airline : airlines)
         airline->finalizeScores();
 
 }
 
+// Add review to data structures (HashMap and Splay Tree)
 void Processor::addReview(vector<std::string>& review)
 {
     // Stage 1 - Airline Generation/Updating
@@ -80,15 +80,15 @@ void Processor::addReview(vector<std::string>& review)
 
         // If destinationMap for source city doesn't contain destination city,
         // create new entry with corresponding airline vector
-        auto destMap = sourceMap.at(source);
-        if (!destMap.count(dest))
-            destMap.emplace(dest, vector<Airline*>());
+        auto& destMapMap = sourceMap.at(source);
+        if (!destMapMap.count(dest))
+            destMapMap.emplace(dest, vector<Airline*>());
 
         // If airlineVec for destination city doesn't contain the airline being reviewed,
         // add it to the vector
-        auto airlineVec = destMap.at(dest);
-        if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
-            airlineVec.push_back(airline);
+        auto& airlineVecMap = destMapMap.at(dest);
+        if (find(airlineVecMap.begin(), airlineVecMap.end(), airline) == airlineVecMap.end())
+            airlineVecMap.push_back(airline);
 
         // Part B - Splay Tree
 
@@ -97,14 +97,14 @@ void Processor::addReview(vector<std::string>& review)
             sourceTree.insert(source);
 
         // If source city lacks destination city, add it
-        destMap = sourceTree.searchTree(source)->destinations;
-        if (!destMap.count(dest))
-            destMap.emplace(dest, vector<Airline*>());
+        auto& destMapTree = sourceTree.searchTree(source)->destinations;
+        if (!destMapTree.count(dest))
+            destMapTree.emplace(dest, vector<Airline*>());
 
         // If destination city lacks airline, add it
-        airlineVec = destMap.at(dest);
-        if (find(airlineVec.begin(), airlineVec.end(), airline) == airlineVec.end())
-            airlineVec.push_back(airline);
+        auto& airlineVecTree = destMapTree.at(dest);
+        if (find(airlineVecTree.begin(), airlineVecTree.end(), airline) == airlineVecTree.end())
+            airlineVecTree.push_back(airline);
     }
 }
 
@@ -121,6 +121,8 @@ std::pair<double, double> Processor::setRouteVec(string source, string dest)
     // Time variables for the HashMap and Splay Tree
     double mapTime, treeTime;
 
+    // Vector containing airlines that fly the inputted route
+    vector<Airline*> vec;
 
     // Part A - HashMap
 
@@ -128,7 +130,15 @@ std::pair<double, double> Processor::setRouteVec(string source, string dest)
     auto start = std::chrono::high_resolution_clock::now();
 
     // Retrieve airline vector from HashMap
-    vector<Airline*> vec = sourceMap.at(source).at(dest);
+    try
+    {
+        vec = sourceMap.at(source).at(dest);
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Error: invalid route." << std::endl;
+        return std::make_pair(-1, -1);
+    }
 
     // Stop timer and store total time to find and sort data
     auto end = std::chrono::high_resolution_clock::now();
@@ -150,11 +160,13 @@ std::pair<double, double> Processor::setRouteVec(string source, string dest)
     treeTime = diff.count();
 
     currRoute = vec;
+    sortRoute();
 
     // Return pair with total time to execute for both data structures
     return std::make_pair(mapTime, treeTime);
 }
 
+// Return vector of airlines corresponding to current route
 vector<Airline*> Processor::getRouteVec()
 {
     return currRoute;
