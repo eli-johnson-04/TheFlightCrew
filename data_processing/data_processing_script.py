@@ -158,9 +158,9 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                                 if line[9] == '':
                                     line[9] = 'NO_SOURCE'
                             except:
+                                airport_misses.add(line[9])
                                 line[9] = 'NO_SOURCE'
                                 code_misses += 1
-                                airport_misses.add(line[9])
 
                         if dest:
                             try:
@@ -169,9 +169,9 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                                 if line[10] == '':
                                     line[10] = 'NO_DEST'
                             except:
+                                airport_misses.add(line[10])
                                 line[10] = 'NO_DEST'
                                 code_misses += 1
-                                airport_misses.add(line[10])
 
 
                         # If there is an instance where there is no city for an airport code, the row is deemed no-route.
@@ -199,10 +199,10 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         writer.writerow(line)
 
                 '''DEBUG---------------------------------------------------------------------------------------------'''
-                print(no_route_count)
-                if replaceCodes:
-                    print('airport code misses: ', code_misses)
-                    print(sorted(airport_misses))
+                #print(no_route_count)
+                #if replaceCodes:
+                 #   print('airport code misses: ', code_misses)
+                  #  print(sorted(airport_misses))
 
 
 
@@ -291,6 +291,18 @@ def extractCodesCSV(airportCodes):
     codeDict['SAO'] = 'Sao Paulo'
     codeDict['SEL'] = 'Seoul'
     codeDict['STO'] = 'Stockholm'
+
+    # Typo for JFK.
+    codeDict['JFL'] = 'New York'
+
+    # Hand-checked and verified to be Las Vegas.
+    codeDict['LVG'] = 'Las Vegas'
+
+    # Hand-checked to be a typo for Jakarta.
+    codeDict['CGL'] = 'Jakarta'
+
+    # Checked reviews and determined DBX is Dubai.
+    codeDict['DBX'] = 'Dubai'
 
     return codeDict
 
