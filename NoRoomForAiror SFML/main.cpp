@@ -9,6 +9,7 @@ int main()
     sf::RenderWindow window;
     window.create(sf::VideoMode(1200, 600), "No Room For Air-or", sf::Style::Titlebar | sf::Style::Close);
     window.setKeyRepeatEnabled(true);
+    sf::Color lightBlue(135, 206, 235);
 
     // loads the comic neue fonts for use
     sf::Font comicNeueReg;
@@ -46,7 +47,7 @@ int main()
     // makes the application splitting border
     sf::RectangleShape midBorder;
     midBorder.setSize(sf::Vector2f(15.f, 600.f));
-    midBorder.setPosition(550.f, 0.f);
+    midBorder.setPosition(490.f, 0.f);
     midBorder.setFillColor(sf::Color::Black);
 
     // creation of the "from location" box
@@ -83,29 +84,17 @@ int main()
     missingInputText.setFillColor(sf::Color::Red);
 
     // TODO: 1/4 testing data set
-    std::vector<std::vector<std::string>> airlineTable ={
-            {"1", "2", "3", "4", "5"},
-            {"Airline A", "Airline B", "Airline C", "Airline D", "Airline E"},
-            {"10", "10", "9", "8", "7"},
-            {"Charlie", "22", "UK", "W", "W"}
-    };
+    std::vector<std::vector<std::string>> airlineTable(6, std::vector<std::string>(9, "-"));
+    airlineTable[0] = {"Airline", "Overall", "Entertainment", "Food", "Comfort", "Service", "Value", "Ground\nService", "WiFi"};
 
-    const float cellWidth = 100.0f;
+    const float cellWidth = 76.0f;
     const float cellHeight = 30.0f;
-    const float posAdjustX = 600.f;
+    const float posAdjustX = 510.f;
     const float posAdjustY = 100.f;
 
-    std::vector<sf::Text> texts;
+    std::vector<sf::Text> values;
 
     // TODO: 2/4 converts the data values into text objects and puts in a vector
-    for (int i = 0; i < airlineTable[i].size(); ++i) {
-        for (int j = 0; j < airlineTable.size(); ++j) {
-            sf::Text text(airlineTable[j][i], comicNeueReg, 14);
-            text.setPosition(2+posAdjustX+(cellWidth * (float)j), posAdjustY+(cellHeight * (float)i));
-            text.setFillColor(sf::Color::Black);
-            texts.push_back(text);
-        }
-    }
 
     while (window.isOpen())
     {
@@ -150,7 +139,51 @@ int main()
                             else
                             {
                                 missingInputText.setString("");
-                                std::cout << "DO THE THING FROM THE OTHER CODE!!" << std::endl; //TODO: change to proper function
+                                /*
+                                 * Processor* prog = new Processor();
+                                 * prog->start();
+                                 * std::pair<double, double> timePair = setRouteVec(fromLoc.getText(), toLoc.getText());
+                                 * if (timePair.first == -1)
+                                 * {
+                                 *      auto routeVec =
+                                 * }
+                                 *
+                                 * // make the time result text lines
+                                 *
+                                 * auto routeVec = prog->getRouteVec();
+                                 * for (int i = 0; i < (routeVec.size() < 5 ? routeVec.size() : 5; i++)
+                                 * for (int j = 0; j < airlineTable[0].size(); j++)
+                                 * {
+                                 *      if (j == 0)
+                                 *      {
+                                 *          airlineTable[i+1] = routeVec[i].getName();
+                                 *      }
+                                 *      else
+                                 *      {
+                                 *          airlineTable[i+1][j] = "" + routeVec[i].getScores()[j];
+                                 *      }
+                                 * }
+                                 */
+                                /*
+                                airlineTable =
+                                              {
+                                    {"Overall", "Airline", "Entertainment", "Food", "Comfort", "Service", "Value", "Ground\nService", "WiFi"},
+                                    {"9.9", "Airline A", "10", "10", "10", "10", "10", "10", "10"},
+                                    {"9.9", "Airline B", "10", "10", "10", "10", "10", "10", "10"},
+                                    {"9.9", "Airline C", "10", "10", "10", "10", "10", "10", "10"},
+                                    {"9.9", "Airline D", "10", "10", "10", "10", "10", "10", "10"},
+                                    {"9.9", "Airline E", "10", "10", "10", "10", "10", "10", "10"} };
+                                    */
+                                for (int i = 0; i < airlineTable.size(); ++i)
+                                {
+                                    for (int j = 0; j < airlineTable[i].size(); ++j)
+                                    {
+                                        sf::Text info(airlineTable[i][j], comicNeueReg, 11);
+                                        info.setPosition(2+posAdjustX+(cellWidth * (float)j), posAdjustY+(cellHeight * (float)i));
+                                        info.setFillColor(sf::Color::Black);
+                                        values.push_back(info);
+                                    }
+                                }
                             }
                         }
                     }
@@ -161,8 +194,8 @@ int main()
                     toLoc.typedOn(event);
                 }
             }
-            // reset screen to white
-            window.clear(sf::Color::White);
+            // reset screen to sky blue
+            window.clear(lightBlue);
 
             // renders the left-hand side text + screen split
             window.draw(title);
@@ -188,10 +221,12 @@ int main()
             //window.draw(tableVert1);
 
             // TODO: 3/4 renders the table template
-            for (int i = 0; i < airlineTable[i].size(); ++i) {
-                for (int j = 0; j < airlineTable.size(); ++j) {
+            for (int i = 0; i < airlineTable.size(); ++i)
+            {
+                for (int j = 0; j < airlineTable[i].size(); ++j)
+                {
                     sf::RectangleShape cell(sf::Vector2f(cellWidth, cellHeight));
-                    cell.setPosition(posAdjustX+(cellWidth * j), posAdjustY+(cellHeight * i));
+                    cell.setPosition(posAdjustX+(cellWidth * (float)j), posAdjustY+(cellHeight * (float)i));
                     cell.setOutlineThickness(2.0f);
                     cell.setOutlineColor(sf::Color::Black);
                     window.draw(cell);
@@ -199,7 +234,7 @@ int main()
             }
 
             // TODO: 4/4 puts text on the cells
-            for (const auto& text : texts)
+            for (const auto& text : values)
             {
                 window.draw(text);
             }
