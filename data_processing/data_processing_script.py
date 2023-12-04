@@ -113,12 +113,6 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                         #review[15] = viaMatch.group(2)
                         #review[16] = viaMatch.group(1)
 
-                    # This is a check for making sure that poorly captured data does not impede on accuracy. If the
-                    # length of a source or destination somehow ends up at only one character, the whole row is deemed
-                    # as having no route. TODO: FIX ME
-                    #if (len(review[15]) <= 1 | len(review[16]) <= 1):
-                        #review[15] = 'NO_SOURCE'
-                        #review[16] = 'NO_DEST'
 
                         '''MATCH NOT FOUND / NO ROUTE CHECK----------------------------------------------------------'''
                     # If a match is not found, write its ID to 'misses.csv' to improve data recognition. Prints the
@@ -171,6 +165,17 @@ def processCSV(input, output, rPattern, columnsToWrite, includeNoRoutes, writeMi
                             except:
                                 code_misses += 1
                                 airport_misses.add(line[10])
+
+                    # This is a check for making sure that poorly captured data does not impede on accuracy. If the
+                    # length of a source or destination somehow ends up at only one character, the whole row is deemed
+                    # as having no route.
+                    tinyPat = re.compile(r'^(.)$', flags = re.IGNORECASE)
+                    srcMatch = re.search(tinyPat, line[9])
+                    dstMatch = re.search(tinyPat, line[10])
+                    if srcMatch or dstMatch:
+                        line[9] = 'NO_SOURCE'
+                        line[10] = 'NO_DEST'
+
 
                     # Write the line, ignoring the header.
                     if line[0] != "AirlineName":
