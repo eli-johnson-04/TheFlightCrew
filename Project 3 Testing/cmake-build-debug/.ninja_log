@@ -1,6 +1,2 @@
 # ninja log v5
-5	2364	7233575345856690	CMakeFiles/Airline_Processing.dir/Processor.cpp.obj	42a9a78fa9b361e2
-17	1132	7233580341364573	CMakeFiles/Airline_Processing.dir/main.cpp.obj	b6ee2fc29fad6560
-4	463	7233582152746381	CMakeFiles/Airline_Processing.dir/Airline.cpp.obj	98ff68016a52332d
-3	764	7233513539085795	CMakeFiles/Airline_Processing.dir/SplayTree.cpp.obj	147ef305d8f07519
 464	1016	7233582158242384	Airline_Processing.exe	531d74a585a9b4c0
