@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <chrono>
+#include <string>
 #include "Processor.h"
 #include "rapidcsv.h"
 
@@ -69,6 +70,12 @@ void Processor::addReview(vector<std::string>& review)
     string source = review[9];
     string dest = review[10];
 
+    // Convert city names to lowercase when added to backing data structures
+    for(auto& letter : source)
+        letter = tolower(letter);
+    for(auto& letter : dest)
+        letter = tolower(letter);
+
     // Checks if review is associated with a route
     // Only add to map if a route is associated with the review
     if(source != "NO_SOURCE")
@@ -123,6 +130,12 @@ std::pair<double, double> Processor::setRouteVec(string source, string dest)
 
     // Vector containing airlines that fly the inputted route
     vector<Airline*> vec;
+
+    // Convert inputted city names to lowercase to match in searches
+    for(auto& letter : source)
+        letter = tolower(letter);
+    for(auto& letter : dest)
+        letter = tolower(letter);
 
     // Part A - HashMap
 

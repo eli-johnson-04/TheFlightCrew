@@ -11,7 +11,7 @@ int main()
     prog->start(); // Generate backing Splay Tree and HashMap
 
     // Sets route and calculates & displays access time for each structure
-    std::pair<double, double> timePair = prog->setRouteVec("Johannesbur", "Paris");
+    std::pair<double, double> timePair = prog->setRouteVec("johannesburg", "paris");
 
     // Handles invalid searches
     if (timePair.first == -1)
@@ -23,10 +23,7 @@ int main()
     // Retrieve airlines that run the route
     auto routeVec = prog->getRouteVec();
 
-    // Set ratings precision to 1 decimal place
-    std::cout << std::fixed << std::setprecision(1) << std::endl;
-
-    // Display each airline and their respective rankings
+    // Display each airline and their respective ratings
     for (auto airline : routeVec)
     {
         std::cout << airline->getName() << ": ";
