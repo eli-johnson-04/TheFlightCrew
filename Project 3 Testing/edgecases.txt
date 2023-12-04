@@ -1,0 +1,10 @@
+no input
+bad input
+numbers in input
+
+single space
+
+print invalid search to screen if input is invalid
+have a loading symbol thing
+
+hide table when no data?

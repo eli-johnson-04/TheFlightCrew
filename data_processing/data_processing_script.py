@@ -384,7 +384,7 @@ def main():
 
 
     #fixCSV('AirlineReviews.csv', 'test_12-2-23.csv', pattern)
-    #TODO: defaults: includeNoRoutes = True, writeMisses = False, replaceCodes = False
+    #TODO: defaults: includeNoRoutes = True, writeMisses = False, replaceCodes = True
     processCSV('AirlineReviews.csv', 'AirlineData.csv', punctualPattern, COLUMNS_TO_WRITE, includeNoRoutes = True, writeMisses = False, replaceCodes = True)
     #replaceAirportCodes('AirlineData.csv', 'airports.csv')
     exit()
