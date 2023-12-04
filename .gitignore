@@ -1,6 +1,4 @@
 
-AirlineReviews.csv
-data_processing/airports.csv
 data_processing/sansLayovers.csv
 data_processing/test.csv
 data_processing/test_12-2-23.csv
@@ -14,4 +12,4 @@ Airline Processing/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-99c1d6833
 Airline Processing/cmake-build-debug/.cmake/api/v1/reply/cache-v2-706bd0e3ae0af6be87c8.json
 Airline Processing/cmake-build-debug/.cmake/api/v1/reply/index-2023-12-03T21-29-16-0033.json
 *.json
-data_processing/misses.csv
+data_processing/AirlineReviews.csv
