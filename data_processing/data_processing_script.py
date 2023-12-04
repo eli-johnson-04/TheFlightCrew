@@ -429,7 +429,7 @@ def main():
                                  r'\s*$',                      #     Allows for an optional space at the end of the last string.
                                  flags = re.IGNORECASE)        #     Ignores the case of all characters.
 
-    # Used to choose if debug information is shown and the if the output file is verified.
+    # Used to choose if debug information is shown and then if the output file is verified.
     DEBUG = False
 
     # Process the CSV containing the reviews.

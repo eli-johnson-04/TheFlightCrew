@@ -18,8 +18,9 @@ The dataset containing the reviews is too large to be stored in the repo, but yo
 
 ## Credits
 Joseph Benigno [jbenigno@ufl.edu](mailto:jbenigno@ufl.edu) - Programmer, User Interface\
-Elijah Johnson [elijah.johnson@ufl.edu](mailto:elijah.johnson@ufl.edu) - Programmer, Raw Data Handling and Formatting     
-Jonathan Xavioer [jxavioer@ufl.edu](mailto:jxavioer@ufl.edu) - Programmer, Proccessed Data Manipulation and Data Structures
+Elijah Johnson [elijah.johnson@ufl.edu](mailto:elijah.johnson@ufl.edu) - Programmer, Raw Data Handling and Formatting\
+Jonathan Xavioer [jxavioer@ufl.edu](mailto:jxavioer@ufl.edu) - Programmer, Proccessed Data Manipulation and Data Structures\
+Report - [Google Docs Link](https://docs.google.com/document/d/1xB2XX0hDOQ4nfWiN1vOKUG-qVA9NmOm_BXc9q97QiT8/edit?usp=sharing)
 
 ### Resources/Libraries
 C++ SFML - [link](https://www.sfml-dev.org/)\
