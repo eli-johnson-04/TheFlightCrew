@@ -33,6 +33,7 @@ std::vector<float> Airline::getScores()
 }
 
 // Take average of each rating for the airline
+// and store with 1 decimal place
 void Airline::finalizeScores()
 {
     for (int i = 0; i < 8; i++)

@@ -23,9 +23,6 @@ int main()
     // Retrieve airlines that run the route
     auto routeVec = prog->getRouteVec();
 
-    // Set ratings precision to 1 decimal place
-    //std::cout << std::fixed << std::setprecision(1) << std::endl;
-
     // Display each airline and their respective ratings
     for (auto airline : routeVec)
     {
