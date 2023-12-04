@@ -121,6 +121,8 @@ std::pair<double, double> Processor::setRouteVec(string source, string dest)
     // Time variables for the HashMap and Splay Tree
     double mapTime, treeTime;
 
+    // Vector containing airlines that fly the inputted route
+    vector<Airline*> vec;
 
     // Part A - HashMap
 
@@ -128,7 +130,15 @@ std::pair<double, double> Processor::setRouteVec(string source, string dest)
     auto start = std::chrono::high_resolution_clock::now();
 
     // Retrieve airline vector from HashMap
-    vector<Airline*> vec = sourceMap.at(source).at(dest);
+    try
+    {
+        vec = sourceMap.at(source).at(dest);
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Error: invalid route." << std::endl;
+        return std::make_pair(-1, -1);
+    }
 
     // Stop timer and store total time to find and sort data
     auto end = std::chrono::high_resolution_clock::now();

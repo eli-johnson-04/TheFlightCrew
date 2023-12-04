@@ -11,7 +11,12 @@ int main()
     prog->start(); // Generate backing Splay Tree and HashMap
 
     // Sets route and calculates & displays access time for each structure
-    std::pair<double, double> timePair = prog->setRouteVec("Johannesburg", "Paris");
+    std::pair<double, double> timePair = prog->setRouteVec("Johannesbur", "Paris");
+
+    // Handles invalid searches
+    if (timePair.first == -1)
+        return -1;
+
     std::cout << "Time (Map): " << timePair.first << std::endl;
     std::cout << "Time (Tree): " << timePair.second << std::endl;
 
