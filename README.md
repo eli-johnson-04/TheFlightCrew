@@ -1,5 +1,5 @@
 # No Room for Air-or
-This project features an SFML executable that uses a dataset of 129,455 flight reviews to give a user the best recommendation for an inputted source and destination city. It will show all of the airlines that fly the route, ranked by overall score (/ 10), as well as averaged ratings (/ 5) for a variety of aspects of the in-flight experience. All of the reviews are from real people. 
+This project features an SFML executable that uses a dataset of 129,455 flight reviews to give a user the best recommendation for an inputted source and destination city. It will show all of the airlines that fly the route, ranked by overall score (out of 10), as well as averaged ratings (out of 5) for a variety of aspects of the in-flight experience. All of the reviews are from real people. 
 
 ## Table of Contents
 [Airline Processing](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/Airline%20Processing) - Contains the backend for the program that processes the formatted reviews. The Processor class contains the Hash Map and the Splay Tree and handles all data operations.\
