@@ -21,6 +21,8 @@ public:
         selected = false;
     }
 
+    ~TextBox() = default;
+
     void setFont(sf::Font& font)
     {
         textbox.setFont(font);
