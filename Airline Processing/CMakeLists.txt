@@ -7,4 +7,5 @@ add_executable(Airline_Processing Processor.cpp SplayTree.cpp
         Processor.h
         Airline.cpp
         Airline.h
-        rapidcsv.h)
+        rapidcsv.h
+        main.cpp)
