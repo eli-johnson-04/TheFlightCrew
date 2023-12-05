@@ -3,8 +3,8 @@ This project features an SFML executable that uses a dataset of 129,455 flight r
 
 ## Table of Contents
 [Airline Processing](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/Airline%20Processing) - Contains the backend for the program that processes the formatted reviews. The Processor class contains the Hash Map and the Splay Tree and handles all data operations.\
-[NoRoomForAiror SFML](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/NoRoomForAiror%20SFML) - Contains the SFML application with the user interface. \
-[Project 3 Testing](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/Project%203%20Testing) - Contains the integration of the backend and the frontend, used for testing and to generate the final executable. \
+[NoRoomForAiror SFML](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/NoRoomForAiror%20SFML) - Contains the final SFML application with the user interface. \
+[Project 3 Testing](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/Project%203%20Testing) - Contains the integration of the backend and the frontend, used for testing and to generate a working executable. \
 [data_processing](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/data_processing) - Contains the Python script that processes the airline reviews and outputs the formatted data. See *Data* for more information. 
 
 ## Purpose
@@ -14,7 +14,7 @@ This project features an SFML executable that uses a dataset of 129,455 flight r
 The program allows the user to input a source city and a destination city using the **GO** button. Then, airlines that cover the route, using data from the reviews, are shown and ranked by overall score, out of ten. Other rating categories are shown, including Entertainment, Food, Comfort, Service, Value, Ground Service, and Wifi. These are ranked out of five. The program also uses text in the whimsical Comic Neue font, with bright colors and graphics. 
 
 ## Data
-The dataset containing the reviews is too large to be stored in the repo, but you can download it [here](https://www.kaggle.com/datasets/joelljungstrom/128k-airline-reviews/). However, the processed data *AirlineData.csv* and corresponding *misses.csv* in data_processing are current as of 12-4-23. *misses.csv* stores the route and respective unique-id associated with the missed reviews.
+The dataset containing the reviews is too large to be stored in the repo, but you can download it [here](https://www.kaggle.com/datasets/joelljungstrom/128k-airline-reviews/). However, the processed data *AirlineData.csv* and corresponding *misses.csv* in data_processing are current as of 12-4-23. *misses.csv* stores the route and respective unique-id associated with the missed reviews. The release is dependent on an [SFML install of 2.5.1 or later](https://www.sfml-dev.org/download/sfml/2.6.1/).
 
 ## Credits
 Joseph Benigno [jbenigno@ufl.edu](mailto:jbenigno@ufl.edu) - Programmer, User Interface\
