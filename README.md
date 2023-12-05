@@ -7,6 +7,10 @@ This project features an SFML executable that uses a dataset of 129,455 flight r
 [Project 3 Testing](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/Project%203%20Testing) - Contains the integration of the backend and the frontend, used for testing and to generate a working executable. \
 [data_processing](https://github.com/eli-johnson-04/TheFlightCrew/tree/main/data_processing) - Contains the Python script that processes the airline reviews and outputs the formatted data. See *Data* for more information. 
 
+## Tutorial
+Download the [release](https://github.com/eli-johnson-04/TheFlightCrew/releases/tag/release), extract the folder, then navigate to NoRoomForAiror\NoRoomForAiror SFML\cmake-build-debug and run the executable. Ignore the Windows Defender message. You can trust us :)\
+This project is dependent on SFML. (see *Data*)
+
 ## Purpose
 **No Room for Air-or** is a final project for COP3530 - Data Structures and Algorithms. The purpose of the project is to compare two data structures or algorithms using a dataset with >100,000 elements. In our case, we compared the search performance of a Hash Map, implented as an std::unordered_map, with a Splay Tree we found online for educational purposes. In our testing, we often found the Splay Tree to be just a little bit faster than the std::unordered_map, usually by a few hundred thousandths of a second. 
 
