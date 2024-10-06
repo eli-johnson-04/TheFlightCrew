@@ -35,9 +35,9 @@ Splay Tree - [link](https://github.com/Bibeknam/algorithmtutorprograms/tree/mast
 
 This repository contains coursework for *COP3530: Data Structures and Algorithms* at the University of Florida. It is intended to be viewed and modified solely by its specified collaborators:
 
--Joseph Benigno [jbenigno@ufl.edu](mailto:jbenigno@ufl.edu)
--Elijah Johnson [elijah.johnson@ufl.edu](mailto:elijah.johnson@ufl.edu)
--Jonathan Xavioer [jxavioer@ufl.edu](mailto:jxavioer@ufl.edu)
+- [Joseph Benigno](https://github.com/jojongx)
+- [Elijah Johnson](https://github.com/eli-johnson-04)
+- [Jonathan Xavioer](https://github.com/jxavioer)
 
 ### Usage Restrictions:
 1. This code is not open-source and is not available for general use, modification, or distribution.
